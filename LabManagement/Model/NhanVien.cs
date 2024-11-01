@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LabManagement.Model
 {
@@ -11,6 +12,10 @@ namespace LabManagement.Model
         public string? DiaChi { get; set; }
         public string? SoDT { get; set; }
 
+        // Thêm Email và Mật khẩu
+        public string? Email { get; set; }
+        public string? MatKhau { get; set; }
+
         // Foreign key for ChucVu
         public string? MaCV { get; set; }
         [ForeignKey("MaCV")]
@@ -21,5 +26,4 @@ namespace LabManagement.Model
         [ForeignKey("MaNhom")]
         public NhomQuyen? NhomQuyen { get; set; }
     }
-
 }

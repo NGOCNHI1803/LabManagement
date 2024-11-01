@@ -1,5 +1,7 @@
 using LabManagement.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +27,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseStaticFiles(); 
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(@"D:\Project\LabManagement\LabManagement\LabManagement\Image\DungCu"),
+    RequestPath = "/images/DungCu"
+});
 
 app.UseHttpsRedirection();
 

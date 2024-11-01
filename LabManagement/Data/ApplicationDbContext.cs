@@ -1,5 +1,6 @@
 ﻿using LabManagement.Model;
 using Microsoft.EntityFrameworkCore;
+
 namespace LabManagement.Data
 {
     public class ApplicationDbContext : DbContext
@@ -8,15 +9,18 @@ namespace LabManagement.Data
             : base(options)
         {
         }
+
         public DbSet<ChucVu> ChucVu { get; set; }
-
         public DbSet<NhomQuyen> NhomQuyen { get; set; }
-
         public DbSet<NhanVien> NhanVien { get; set; }
+        public DbSet<LoaiDungCu> LoaiDungCu { get; set; }
+        public DbSet<NhaCungCap> NhaCungCap { get; set; }
 
+        public DbSet<DungCu> DungCu { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<ChucVu>(entity =>
             {
                 entity.HasKey(e => e.MaCV);
@@ -49,8 +53,76 @@ namespace LabManagement.Data
                 entity.Property(e => e.GioiTinh).HasMaxLength(10);
                 entity.Property(e => e.DiaChi).HasMaxLength(200);
                 entity.Property(e => e.SoDT).HasMaxLength(15);
+
+                // Cấu hình cho cột Email và Mật khẩu
+                entity.Property(e => e.Email)
+                      .HasMaxLength(100)
+                      .IsRequired();
+
+                entity.Property(e => e.MatKhau)
+                      .HasMaxLength(100)
+                      .IsRequired();
             });
 
+            modelBuilder.Entity<LoaiDungCu>(entity =>
+            {
+                entity.HasKey(e => e.MaLoaiDC); // Thiết lập khóa chính
+                entity.Property(e => e.TenLoaiDC)
+                      .IsRequired()
+                      .HasMaxLength(100); // Thiết lập yêu cầu và chiều dài tối đa cho TênLoaiDC
+                entity.Property(e => e.MoTa)
+                      .HasMaxLength(255); // Chiều dài tối đa cho MoTa
+            });
+
+            modelBuilder.Entity<NhaCungCap>(entity =>
+            {
+                entity.HasKey(e => e.MaNCC); // Thiết lập khóa chính
+                entity.Property(e => e.TenNCC)
+                      .IsRequired()
+                      .HasMaxLength(100); 
+                entity.Property(e => e.DiaChi)
+                      .HasMaxLength(255); // Chiều dài tối đa cho MoTa
+            });
+
+            modelBuilder.Entity<DungCu>(entity =>
+            {
+                entity.HasKey(e => e.MaDungCu);
+
+                // Configure foreign key for ChucVu
+                entity.HasOne(e => e.LoaiDungCu)
+                      .WithMany()
+                      .HasForeignKey(e => e.MaLoaiDC)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                // Configure foreign key for NhomQuyen
+                entity.HasOne(e => e.NhaCungCap)
+                      .WithMany()
+                      .HasForeignKey(e => e.MaNCC)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.Property(e => e.TenDungCu)
+                     .IsRequired()
+                     .HasMaxLength(100);
+
+                entity.Property(e => e.SoLuong)
+                      .IsRequired();
+
+                entity.Property(e => e.TinhTrang)
+                      .HasMaxLength(50);
+
+                entity.Property(e => e.ViTri)
+                      .HasMaxLength(255);
+
+                entity.Property(e => e.NgayCapNhat);
+                entity.Property(e => e.NgaySX);
+                entity.Property(e => e.NhaSX)
+                      .HasMaxLength(100);
+                entity.Property(e => e.NgayBaoHanh);
+                entity.Property(e => e.XuatXu)
+                      .HasMaxLength(100);
+                entity.Property(e => e.HinhAnh)
+                      .HasMaxLength(255);
+            });
         }
     }
 }
