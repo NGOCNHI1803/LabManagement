@@ -5,6 +5,7 @@ using LabManagement.Model;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity.Data;
 
 namespace LabManagement.Controllers
 {
@@ -106,6 +107,24 @@ namespace LabManagement.Controllers
         {
             return _context.NhanVien.Any(e => e.MaNV == id);
         }
+        [HttpPost("login")]
+        public async Task<ActionResult<NhanVien>> Login([FromBody] NhanVien loginRequest)
+        {
+            // Tìm nhân viên theo email và mật khẩu
+            var nhanVien = await _context.NhanVien
+                .FirstOrDefaultAsync(nv => nv.Email == loginRequest.Email && nv.MatKhau == loginRequest.MatKhau);
+
+            // Nếu không tìm thấy, trả về lỗi
+            if (nhanVien == null)
+            {
+                return Unauthorized(new { message = "Email hoặc mật khẩu không đúng" });
+            }
+
+            // Nếu tìm thấy, trả về thông tin nhân viên (ẩn mật khẩu trước khi trả về)
+            nhanVien.MatKhau = null;
+            return Ok(nhanVien);
+        }
+
     }
 
 }
