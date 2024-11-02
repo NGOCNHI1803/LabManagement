@@ -15,7 +15,7 @@ namespace LabManagement.Controllers
     {
         private readonly ApplicationDbContext _context;
         private const string ImageDirectory = @"D:\Project\LabManagement\LabManagement\LabManagement\Image\DungCu";
-        private const string ImageBaseUrl = "http://localhost/images/DungCu";
+        private const string ImageBaseUrl = "http://localhost:5123/images/DungCu";
         public DungCuController(ApplicationDbContext context)
         {
             _context = context;

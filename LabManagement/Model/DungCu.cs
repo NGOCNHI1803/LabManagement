@@ -44,7 +44,7 @@ namespace LabManagement.Model
 
         // Thuộc tính ảo để lấy URL hình ảnh
         [NotMapped]
-        public string? HinhAnhUrl => string.IsNullOrEmpty(HinhAnh) ? null : $"http://localhost/images/DungCu/{HinhAnh}";
+        public string? HinhAnhUrl => string.IsNullOrEmpty(HinhAnh) ? null : $"http://localhost:5123/images/DungCu/{HinhAnh}";
         // Foreign key cho bảng LoaiDungCu
         [ForeignKey("MaLoaiDC")]
         public LoaiDungCu? LoaiDungCu { get; set; } // Đối tượng loại dụng cụ
