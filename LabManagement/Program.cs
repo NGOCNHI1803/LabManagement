@@ -40,8 +40,14 @@ if (app.Environment.IsDevelopment())
 app.UseStaticFiles();
 app.UseStaticFiles(new StaticFileOptions
 {
-    FileProvider = new PhysicalFileProvider(@"D:\Ky1_2024_2025\DoAnChuyenNganh\BE\LabManagement\LabManagement\Image\DungCu"),
+    FileProvider = new PhysicalFileProvider(@"D:\Project\LabManagement\LabManagement\LabManagement\Image\DungCu"),
     RequestPath = "/images/DungCu"
+});
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(@"D:\Project\LabManagement\LabManagement\LabManagement\Image\ThietBi"),
+    RequestPath = "/images/ThietBi"
 });
 
 app.UseHttpsRedirection();
