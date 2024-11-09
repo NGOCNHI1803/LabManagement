@@ -17,6 +17,8 @@ namespace LabManagement.Data
         public DbSet<NhaCungCap> NhaCungCap { get; set; }
 
         public DbSet<DungCu> DungCu { get; set; }
+        public DbSet<LoaiThietBi> LoaiThietBi { get; set; }
+        public DbSet<ThietBi> ThietBi { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -122,6 +124,44 @@ namespace LabManagement.Data
                       .HasMaxLength(100);
                 entity.Property(e => e.HinhAnh)
                       .HasMaxLength(255);
+            });
+
+            modelBuilder.Entity<LoaiThietBi>(entity =>
+            {
+                entity.HasKey(e => e.MaLoaiThietBi);
+                entity.Property(e => e.TenLoaiThietBi)
+                      .IsRequired()
+                      .HasMaxLength(100);
+                entity.Property(e => e.MoTa)
+                      .HasMaxLength(255);
+            });
+
+            modelBuilder.Entity<ThietBi>(entity =>
+            {
+                entity.HasKey(e => e.MaThietBi);
+                entity.Property(e => e.TenThietBi)
+                      .IsRequired()
+                      .HasMaxLength(100);
+                entity.Property(e => e.TinhTrang)
+                      .HasMaxLength(50);
+                entity.Property(e => e.NhaSX)
+                      .HasMaxLength(100);
+                entity.Property(e => e.XuatXu)
+                      .HasMaxLength(100);
+                entity.Property(e => e.HinhAnh)
+                      .HasMaxLength(255);
+
+                // Thiết lập khóa ngoại cho bảng LoaiThietBi
+                entity.HasOne(e => e.LoaiThietBi)
+                      .WithMany()
+                      .HasForeignKey(e => e.MaLoaiThietBi)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                // Thiết lập khóa ngoại cho bảng NhaCungCap
+                entity.HasOne(e => e.NhaCungCap)
+                      .WithMany()
+                      .HasForeignKey(e => e.MaNCC)
+                      .OnDelete(DeleteBehavior.Restrict);
             });
         }
     }
