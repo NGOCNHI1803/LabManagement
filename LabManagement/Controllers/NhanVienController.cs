@@ -108,22 +108,50 @@ namespace LabManagement.Controllers
             return _context.NhanVien.Any(e => e.MaNV == id);
         }
         [HttpPost("login")]
-        public async Task<ActionResult<NhanVien>> Login([FromBody] NhanVien loginRequest)
+        public async Task<ActionResult> Login([FromBody] NhanVien loginRequest)
         {
-            // Tìm nhân viên theo email và mật khẩu
+            if (loginRequest == null || string.IsNullOrEmpty(loginRequest.Email) || string.IsNullOrEmpty(loginRequest.MatKhau))
+            {
+                return BadRequest(new { message = "Email hoặc mật khẩu không được để trống" });
+            }
+
             var nhanVien = await _context.NhanVien
                 .FirstOrDefaultAsync(nv => nv.Email == loginRequest.Email && nv.MatKhau == loginRequest.MatKhau);
 
-            // Nếu không tìm thấy, trả về lỗi
             if (nhanVien == null)
             {
                 return Unauthorized(new { message = "Email hoặc mật khẩu không đúng" });
             }
 
-            // Nếu tìm thấy, trả về thông tin nhân viên (ẩn mật khẩu trước khi trả về)
+            // Ẩn mật khẩu trước khi trả về
             nhanVien.MatKhau = null;
+
+            // Đảm bảo trả về MaNV và Email (có thể thêm các thông tin khác nếu cần)
+            return Ok(new { MaNV = nhanVien.MaNV, Email = nhanVien.Email });
+        }
+
+
+        // GET: api/NhanVien/home/{id}
+        [HttpGet("home/{id}")]
+        public async Task<ActionResult<NhanVien>> GetUserHome(string id)
+        {
+            // Retrieve user by MaNV (userId)
+            var nhanVien = await _context.NhanVien
+                .Include(nv => nv.ChucVu)       // Include related data if necessary
+                .Include(nv => nv.NhomQuyen)
+                .FirstOrDefaultAsync(nv => nv.MaNV == id);
+
+            if (nhanVien == null)
+            {
+                return NotFound(new { message = "User not found" });
+            }
+
+            // Optionally, remove sensitive data before returning
+            nhanVien.MatKhau = null;
+
             return Ok(nhanVien);
         }
+
 
     }
 
