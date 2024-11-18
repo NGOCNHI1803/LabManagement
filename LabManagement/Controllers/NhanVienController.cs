@@ -2,10 +2,12 @@
 using Microsoft.EntityFrameworkCore;
 using LabManagement.Data;
 using LabManagement.Model;
+using LabManagement.Services;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity.Data;
+using Microsoft.AspNetCore.Authorization;
+using BCrypt.Net;
 
 namespace LabManagement.Controllers
 {
@@ -14,10 +16,12 @@ namespace LabManagement.Controllers
     public class NhanVienController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly JwtTokenService _jwtTokenService;
 
-        public NhanVienController(ApplicationDbContext context)
+        public NhanVienController(ApplicationDbContext context, JwtTokenService jwtTokenService)
         {
             _context = context;
+            _jwtTokenService = jwtTokenService;
         }
 
         // GET: api/NhanVien
@@ -30,129 +34,126 @@ namespace LabManagement.Controllers
                 .ToListAsync();
         }
 
-        // GET: api/NhanVien/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<NhanVien>> GetNhanVien(string id)
-        {
-            var nhanVien = await _context.NhanVien
-                .Include(nv => nv.ChucVu)       // Include ChucVu navigation property
-                .Include(nv => nv.NhomQuyen)    // Include NhomQuyen navigation property
-                .FirstOrDefaultAsync(nv => nv.MaNV == id);
+        //[HttpPost]
+        //public async Task<ActionResult<NhanVien>> PostNhanVien(NhanVien nhanVien)
+        //{
+        //    // Băm mật khẩu trước khi lưu
+        //    nhanVien.MatKhau = BCrypt.Net.BCrypt.HashPassword(nhanVien.MatKhau);
 
-            if (nhanVien == null)
-            {
-                return NotFound();
-            }
+        //    _context.NhanVien.Add(nhanVien);
+        //    await _context.SaveChangesAsync();
 
-            return nhanVien;
-        }
+        //    return CreatedAtAction(nameof(GetNhanViens), new { id = nhanVien.MaNV }, nhanVien);
+        //}
 
-        // POST: api/NhanVien
-        [HttpPost]
-        public async Task<ActionResult<NhanVien>> PostNhanVien(NhanVien nhanVien)
-        {
-            _context.NhanVien.Add(nhanVien);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetNhanVien), new { id = nhanVien.MaNV }, nhanVien);
-        }
-
-        // PUT: api/NhanVien/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutNhanVien(string id, NhanVien nhanVien)
-        {
-            if (id != nhanVien.MaNV)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(nhanVien).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!NhanVienExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // DELETE: api/NhanVien/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteNhanVien(string id)
-        {
-            var nhanVien = await _context.NhanVien.FindAsync(id);
-            if (nhanVien == null)
-            {
-                return NotFound();
-            }
-
-            _context.NhanVien.Remove(nhanVien);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool NhanVienExists(string id)
-        {
-            return _context.NhanVien.Any(e => e.MaNV == id);
-        }
         [HttpPost("login")]
-        public async Task<ActionResult> Login([FromBody] NhanVien loginRequest)
+        public async Task<ActionResult> Login([FromBody] LoginRequest loginRequest)
         {
-            if (loginRequest == null || string.IsNullOrEmpty(loginRequest.Email) || string.IsNullOrEmpty(loginRequest.MatKhau))
-            {
-                return BadRequest(new { message = "Email hoặc mật khẩu không được để trống" });
-            }
-
             var nhanVien = await _context.NhanVien
-                .FirstOrDefaultAsync(nv => nv.Email == loginRequest.Email && nv.MatKhau == loginRequest.MatKhau);
+                .Include(nv => nv.NhomQuyen)
+                .FirstOrDefaultAsync(nv => nv.Email == loginRequest.Email);
 
             if (nhanVien == null)
             {
                 return Unauthorized(new { message = "Email hoặc mật khẩu không đúng" });
             }
 
-            // Ẩn mật khẩu trước khi trả về
-            nhanVien.MatKhau = null;
-
-            // Đảm bảo trả về MaNV và Email (có thể thêm các thông tin khác nếu cần)
-            return Ok(new { MaNV = nhanVien.MaNV, Email = nhanVien.Email });
-        }
-
-
-        // GET: api/NhanVien/home/{id}
-        [HttpGet("home/{id}")]
-        public async Task<ActionResult<NhanVien>> GetUserHome(string id)
-        {
-            // Retrieve user by MaNV (userId)
-            var nhanVien = await _context.NhanVien
-                .Include(nv => nv.ChucVu)       // Include related data if necessary
-                .Include(nv => nv.NhomQuyen)
-                .FirstOrDefaultAsync(nv => nv.MaNV == id);
-
-            if (nhanVien == null)
+            try
             {
-                return NotFound(new { message = "User not found" });
+                if (BCrypt.Net.BCrypt.Verify(loginRequest.MatKhau, nhanVien.MatKhau))
+                {
+                    var token = _jwtTokenService.GenerateJwtToken(nhanVien);
+                    Console.WriteLine($"Generated Token: {token}"); // Log the token
+
+                    return Ok(new
+                    {
+                        Token = token,
+                        Role = nhanVien.NhomQuyen?.TenNhom,
+                        EmployeeName = nhanVien.TenNV
+                    });
+                }
+                else
+                {
+                    return Unauthorized(new { message = "Email hoặc mật khẩu không đúng" });
+                }
             }
+            catch (BCrypt.Net.SaltParseException)
+            {
+                // Nếu salt không tương thích, băm lại mật khẩu và cập nhật trong DB
+                Console.WriteLine("Salt không tương thích, tiến hành cập nhật mật khẩu");
 
-            // Optionally, remove sensitive data before returning
-            nhanVien.MatKhau = null;
+                // Băm lại mật khẩu
+                var hashedPassword = BCrypt.Net.BCrypt.HashPassword(loginRequest.MatKhau);
 
-            return Ok(nhanVien);
+                // Cập nhật mật khẩu mới vào cơ sở dữ liệu
+                nhanVien.MatKhau = hashedPassword;
+                _context.NhanVien.Update(nhanVien);
+                await _context.SaveChangesAsync();
+
+                var token = _jwtTokenService.GenerateJwtToken(nhanVien);
+                return Ok(new
+                {
+                    Token = token,
+                    Role = nhanVien.NhomQuyen?.TenNhom,
+                    EmployeeName = nhanVien.TenNV
+                });
+            }
         }
+
+
+
+
+
+        //[HttpPost("check-salt-version")]
+        //public IActionResult CheckSaltVersion([FromBody] string password)
+        //{
+        //    // Giả sử lấy mật khẩu đã băm từ cơ sở dữ liệu hoặc đối tượng
+        //    string hashedPassword = "$2a$12$DdY0gDgZyUrxwFhRYtPtjOI1F4nH1BsAGXxb98gOkV7tXXqMuGyOG"; // Ví dụ salt cũ
+
+        //    try
+        //    {
+        //        // Kiểm tra mật khẩu với salt đã băm
+        //        if (BCrypt.Net.BCrypt.Verify(password, hashedPassword))
+        //        {
+        //            return Ok("Mật khẩu hợp lệ và salt tương thích");
+        //        }
+        //        else
+        //        {
+        //            return Unauthorized(new { message = "Mật khẩu không hợp lệ hoặc salt không tương thích." });
+        //        }
+        //    }
+        //    catch (System.ArgumentException ex)
+        //    {
+        //        return Unauthorized(new { message = $"Lỗi salt: {ex.Message}" });
+        //    }
+        //}
+
+
+
+        // Secure endpoints based on roles
+        [Authorize(Policy = "GiamDocTrungTam")] // Giám đốc trung tâm
+        [HttpGet("giam-doc-trung-tam")]
+        public IActionResult ForQuanLyPTN()
+        {
+            return Ok("Giám đốc trung tâm");
+        }
+
+        [Authorize(Policy = "ChuyenVien")] // Chuyên viên phòng thí nghiệm
+        [HttpGet("chuyen-vien")]
+        public IActionResult ForChuyenVien()
+        {
+            return Ok("Chuyên viên phòng thí nghiệm");
+        }
+
+        [Authorize(Policy = "NguoiDung")] // Người dùng (Học sinh/Giáo viên)
+        [HttpGet("nguoi-dung")]
+        public IActionResult ForNguoiDung()
+        {
+            return Ok("Người dùng - Học sinh/Giáo viên");
+        }
+
+
 
 
     }
-
 }

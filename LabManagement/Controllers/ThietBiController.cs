@@ -129,5 +129,31 @@ namespace LabManagement.Controllers
         {
             return _context.ThietBi.Any(e => e.MaThietBi == id);
         }
+        // GET: api/thietbi/loaithethicbi/{maLoaiThietBi}
+        [HttpGet("LoaiThietBi/{maLoaiThietBi}")]
+        public async Task<ActionResult<IEnumerable<ThietBi>>> GetThietBisByLoaiThietBi(string maLoaiThietBi)
+        {
+            try
+            {
+                var thietBis = await _context.ThietBi
+                    .Where(tb => tb.MaLoaiThietBi == maLoaiThietBi)
+                    .Include(tb => tb.LoaiThietBi)
+                    .Include(tb => tb.NhaCungCap)
+                    .ToListAsync();
+
+                if (!thietBis.Any())
+                {
+                    return NotFound("Không tìm thấy thiết bị nào thuộc loại này.");
+                }
+
+                return Ok(thietBis); // Trả về danh sách thiết bị
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Lỗi: {ex.Message}");
+            }
+        }
+
+
     }
 }

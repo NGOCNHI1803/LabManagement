@@ -19,6 +19,7 @@ namespace LabManagement.Data
         public DbSet<DungCu> DungCu { get; set; }
         public DbSet<LoaiThietBi> LoaiThietBi { get; set; }
         public DbSet<ThietBi> ThietBi { get; set; }
+        public DbSet<DuyetPhieuDK> DuyetPhieuDK { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
