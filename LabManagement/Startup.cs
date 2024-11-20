@@ -15,6 +15,7 @@ namespace LabManagement
         {
             _configuration = configuration;
         }
+
         public void ConfigureServices(IServiceCollection services)
         {
             var secretKey = _configuration["AppSettings:SecretKey"];
@@ -46,6 +47,7 @@ namespace LabManagement
             });
 
             services.AddControllers();
+
         }
     }
 }

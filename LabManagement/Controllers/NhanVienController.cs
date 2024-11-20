@@ -69,7 +69,8 @@ namespace LabManagement.Controllers
                     {
                         Token = token,
                         Role = nhanVien.NhomQuyen?.TenNhom,
-                        EmployeeName = nhanVien.TenNV
+                        EmployeeName = nhanVien.TenNV,
+                        maNV = nhanVien.MaNV
                     });
                 }
                 else
@@ -102,31 +103,6 @@ namespace LabManagement.Controllers
 
 
 
-
-
-        //[HttpPost("check-salt-version")]
-        //public IActionResult CheckSaltVersion([FromBody] string password)
-        //{
-        //    // Giả sử lấy mật khẩu đã băm từ cơ sở dữ liệu hoặc đối tượng
-        //    string hashedPassword = "$2a$12$DdY0gDgZyUrxwFhRYtPtjOI1F4nH1BsAGXxb98gOkV7tXXqMuGyOG"; // Ví dụ salt cũ
-
-        //    try
-        //    {
-        //        // Kiểm tra mật khẩu với salt đã băm
-        //        if (BCrypt.Net.BCrypt.Verify(password, hashedPassword))
-        //        {
-        //            return Ok("Mật khẩu hợp lệ và salt tương thích");
-        //        }
-        //        else
-        //        {
-        //            return Unauthorized(new { message = "Mật khẩu không hợp lệ hoặc salt không tương thích." });
-        //        }
-        //    }
-        //    catch (System.ArgumentException ex)
-        //    {
-        //        return Unauthorized(new { message = $"Lỗi salt: {ex.Message}" });
-        //    }
-        //}
 
 
 

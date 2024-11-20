@@ -40,5 +40,7 @@ namespace LabManagement.Model
         // Foreign key cho bảng NhaCungCap
         [ForeignKey("MaNCC")]
         public NhaCungCap? NhaCungCap { get; set; } // Đối tượng nhà cung cấp
+        //public ICollection<PhieuDeXuat> PhieuDeXuat { get; set; }
+
     }
 }

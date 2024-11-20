@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LabManagement.Model
 {
-    public class PhieuDangKi
+    public class PhieuDangKi // đề xuất thiết bị mới
     {
         [Key]
         public string? MaPhieuDK { get; set; } // Mã phiếu đăng ký

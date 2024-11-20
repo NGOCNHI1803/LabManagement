@@ -25,5 +25,6 @@ namespace LabManagement.Model
         public string? MaNhom { get; set; }
         [ForeignKey("MaNhom")]
         public NhomQuyen? NhomQuyen { get; set; }
+
     }
 }

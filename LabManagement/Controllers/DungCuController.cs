@@ -127,6 +127,35 @@ namespace LabManagement.Controllers
             return NoContent();
         }
 
+        [HttpGet("LoaiDungCu/{maLoaiDC}")]
+        public async Task<ActionResult<IEnumerable<DungCu>>> GetDungCusByLoaiDungCu(string maLoaiDC)
+        {
+            try
+            {
+                // Lọc danh sách dụng cụ theo mã loại dụng cụ
+                var dungCus = await _context.DungCu
+                    .Where(dc => dc.MaLoaiDC == maLoaiDC)
+                    .Include(dc => dc.LoaiDungCu)  // Bao gồm thông tin loại dụng cụ
+                    .Include(dc => dc.NhaCungCap) // Bao gồm thông tin nhà cung cấp
+                    .ToListAsync();
+
+                // Nếu không tìm thấy dụng cụ nào
+                if (!dungCus.Any())
+                {
+                    return NotFound("Không tìm thấy dụng cụ nào thuộc loại này.");
+                }
+
+                return Ok(dungCus); // Trả về danh sách dụng cụ đã lọc
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi nếu có
+                return StatusCode(500, $"Lỗi: {ex.Message}");
+            }
+        }
+
+
+
         private bool DungCuExists(string id)
         {
             return _context.DungCu.Any(e => e.MaDungCu == id);
