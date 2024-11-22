@@ -19,7 +19,6 @@ namespace LabManagement.Model
         public string? LyDoDeXuat { get; set; }  // Lý do đề xuất (nếu có)
 
         public string? GhiChu { get; set; }  // Thông tin bổ sung
-        [JsonIgnore]
         public DateTime? NgayHoanTat { get; set; }  // Ngày hoàn thành/phê duyệt phiếu
         
         public string? TrangThai { get; set; }  // Trạng thái phiếu (mặc định là 'Chưa phê duyệt')

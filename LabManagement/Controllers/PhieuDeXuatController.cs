@@ -57,5 +57,25 @@ public class PhieuDeXuatController : ControllerBase
         var phieuDeXuats = await _context.PhieuDeXuat.Select(p => new { p.MaPhieu }).ToListAsync();
         return Ok(phieuDeXuats);
     }
+    // GET: api/PhieuDeXuat/{maPhieu}
+    [HttpGet("{maPhieu}")]
+    public async Task<IActionResult> GetPhieuDeXuatByMaPhieu(string maPhieu)
+    {
+        // Find the proposal with the given MaPhieu
+        var phieuDeXuat = await _context.PhieuDeXuat
+            .Include(p => p.ThietBi)  // Include ThietBi details
+            .Include(p => p.NhanVien) // Include NhanVien details
+            .FirstOrDefaultAsync(p => p.MaPhieu == maPhieu); // Search by MaPhieu
+
+        // If the proposal is not found, return a 404 Not Found
+        if (phieuDeXuat == null)
+        {
+            return NotFound($"PhieuDeXuat with MaPhieu '{maPhieu}' not found.");
+        }
+
+        // Return the found proposal details
+        return Ok(phieuDeXuat);
+    }
+
 
 }

@@ -68,78 +68,25 @@ namespace LabManagement.Controllers
                 return StatusCode(500, "Internal server error: " + ex.Message);
             }
         }
-
-        // GET: api/ChiTietDeXuatDungCu/{maPhieu}/{maDungCu}
-        [HttpGet("{maPhieu}/{maDungCu}")]
-        public async Task<IActionResult> GetChiTietDeXuatDungCuById(string maPhieu, string maDungCu)
+        // GET: api/ChiTietDeXuatDungCu/{maPhieu}
+        [HttpGet("{maPhieu}")]
+        public async Task<IActionResult> GetChiTietDeXuatDungCuByMaPhieu(string maPhieu)
         {
-            var chiTiet = await _context.ChiTietDeXuatDungCu
-                .Include(c => c.PhieuDeXuat)
-                .Include(c => c.DungCu)
-                .FirstOrDefaultAsync(c => c.MaPhieu == maPhieu && c.MaDungCu == maDungCu);
+            // Retrieve the details of ChiTietDeXuatDungCu for the specific MaPhieu
+            var chiTietDeXuatDungCus = await _context.ChiTietDeXuatDungCu
+                .Include(c => c.PhieuDeXuat)  // Include PhieuDeXuat for detailed info
+                .Include(c => c.DungCu)       // Include DungCu for detailed info
+                .Where(c => c.MaPhieu == maPhieu) // Filter by MaPhieu
+                .ToListAsync();
 
-            if (chiTiet == null)
+            if (chiTietDeXuatDungCus == null || chiTietDeXuatDungCus.Count == 0)
             {
-                return NotFound("ChiTietDeXuatDungCu not found.");
+                return NotFound("No details found for the given MaPhieu.");
             }
 
-            return Ok(chiTiet);
+            return Ok(chiTietDeXuatDungCus);
         }
 
-        // PUT: api/ChiTietDeXuatDungCu/{maPhieu}/{maDungCu}
-        [HttpPut("{maPhieu}/{maDungCu}")]
-        public async Task<IActionResult> UpdateChiTietDeXuatDungCu(string maPhieu, string maDungCu, [FromBody] ChiTietDeXuatDungCu updatedChiTiet)
-        {
-            if (updatedChiTiet == null)
-            {
-                return BadRequest("ChiTietDeXuatDungCu cannot be null.");
-            }
-
-            var chiTiet = await _context.ChiTietDeXuatDungCu
-                .FirstOrDefaultAsync(c => c.MaPhieu == maPhieu && c.MaDungCu == maDungCu);
-
-            if (chiTiet == null)
-            {
-                return NotFound("ChiTietDeXuatDungCu not found.");
-            }
-
-            // Update fields
-            chiTiet.SoLuongDeXuat = updatedChiTiet.SoLuongDeXuat;
-
-            try
-            {
-                _context.ChiTietDeXuatDungCu.Update(chiTiet);
-                await _context.SaveChangesAsync();
-                return NoContent(); // Return 204 No Content
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "Internal server error: " + ex.Message);
-            }
-        }
-
-        // DELETE: api/ChiTietDeXuatDungCu/{maPhieu}/{maDungCu}
-        [HttpDelete("{maPhieu}/{maDungCu}")]
-        public async Task<IActionResult> DeleteChiTietDeXuatDungCu(string maPhieu, string maDungCu)
-        {
-            var chiTiet = await _context.ChiTietDeXuatDungCu
-                .FirstOrDefaultAsync(c => c.MaPhieu == maPhieu && c.MaDungCu == maDungCu);
-
-            if (chiTiet == null)
-            {
-                return NotFound("ChiTietDeXuatDungCu not found.");
-            }
-
-            try
-            {
-                _context.ChiTietDeXuatDungCu.Remove(chiTiet);
-                await _context.SaveChangesAsync();
-                return NoContent(); // Return 204 No Content
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "Internal server error: " + ex.Message);
-            }
-        }
     }
+
 }

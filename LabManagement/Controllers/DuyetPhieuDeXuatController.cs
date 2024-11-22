@@ -48,8 +48,7 @@ namespace LabManagement.Controllers
 
             return Ok(duyetPhieu);
         }
-
-        // POST: api/DuyetPhieuDeXuat
+        //POST: api/DuyetPhieuDeXuat
         [HttpPost]
         public async Task<IActionResult> Create(DuyetPhieu duyetPhieu)
         {
@@ -58,12 +57,19 @@ namespace LabManagement.Controllers
                 return BadRequest(ModelState);
             }
 
+            // Check if the MaPhieu already exists in the database
+            var existingPhieu = await _context.DuyetPhieu.FindAsync(duyetPhieu.MaPhieu);
+            if (existingPhieu != null)
+            {
+                return Conflict(new { message = "Phiếu đề xuất này đã được duyệt." });
+            }
+
             _context.DuyetPhieu.Add(duyetPhieu);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetById), new { id = duyetPhieu.MaPhieu }, duyetPhieu);
         }
 
-       
+
     }
 }
