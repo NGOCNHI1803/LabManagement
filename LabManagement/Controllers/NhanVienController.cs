@@ -127,6 +127,25 @@ namespace LabManagement.Controllers
         {
             return Ok("Người dùng - Học sinh/Giáo viên");
         }
+        // GET: api/NhanVien/{id}
+        [HttpGet("{id}")]
+        public async Task<ActionResult<NhanVien>> GetNhanVienById(string id)
+        {
+            // Tìm nhân viên theo mã với các thuộc tính liên quan
+            var nhanVien = await _context.NhanVien
+                .Include(nv => nv.ChucVu)       // Include ChucVu navigation property
+                .Include(nv => nv.NhomQuyen)   // Include NhomQuyen navigation property
+                .FirstOrDefaultAsync(nv => nv.MaNV == id);
+
+            // Nếu không tìm thấy nhân viên
+            if (nhanVien == null)
+            {
+                return NotFound(new { message = "Không tìm thấy nhân viên với mã này" });
+            }
+
+            // Trả về thông tin nhân viên
+            return Ok(nhanVien);
+        }
 
 
 

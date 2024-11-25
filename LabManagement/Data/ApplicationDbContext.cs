@@ -20,11 +20,18 @@ namespace LabManagement.Data
         public DbSet<LoaiThietBi> LoaiThietBi { get; set; }
         public DbSet<ThietBi> ThietBi { get; set; }
         public DbSet<DuyetPhieuDK> DuyetPhieuDK { get; set; }
-
+        public DbSet<ChiTietNhapTB> ChiTietNhapTB { get; set; }
+        public DbSet<ChiTietNhapDC> ChiTietNhapDC { get; set; }
         // Thêm các DbSet mới
         public DbSet<PhieuDeXuat> PhieuDeXuat { get; set; }
         public DbSet<DuyetPhieu> DuyetPhieu { get; set; }
         public DbSet<ChiTietDeXuatDungCu> ChiTietDeXuatDungCu { get; set; }
+        //Chức năng nhập thiết bị/ dụng cụ mới 
+        public DbSet<PhieuNhap> PhieuNhap { get; set; }
+        //public DbSet<ChiTietNhapDC> chiTietNhapDCs { get; set; }
+        public DbSet<PhieuBaoDuong> PhieuBaoDuong { get; set; }
+        public DbSet<ChiTietBaoDuongTB> ChiTietBaoDuongTB { get; set; }
+       
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -217,6 +224,131 @@ namespace LabManagement.Data
                       .HasForeignKey(e => e.MaDungCu)
                       .OnDelete(DeleteBehavior.Restrict);
             });
+            modelBuilder.Entity<PhieuNhap>(entity => 
+            {
+            
+                    entity.HasKey(e => e.MaPhieuNhap);
+                    entity.Property(e => e.MaPhieuNhap).HasMaxLength(20).IsRequired();
+                    entity.Property(e => e.MaNV).HasMaxLength(20).IsRequired();
+                    entity.Property(e => e.NgayNhap).IsRequired(false);
+                    entity.Property(e => e.TongTien).HasColumnType("decimal(18,2)").IsRequired();
+
+                    entity.HasOne(e => e.NhanVien)
+                          .WithMany() 
+                          .HasForeignKey(e => e.MaNV)
+                          .OnDelete(DeleteBehavior.Restrict);
+            });
+            modelBuilder.Entity<ChiTietNhapTB>(entity =>
+            {
+                entity.HasKey(e => new { e.MaPhieuNhap, e.MaThietBi }); 
+
+                entity.Property(e => e.MaPhieuNhap)
+                      .HasMaxLength(20)
+                      .IsRequired();
+
+                entity.Property(e => e.MaThietBi)
+                      .HasMaxLength(20)
+                      .IsRequired();
+
+                entity.Property(e => e.GiaNhap)
+                      .HasColumnType("decimal(18,2)")
+                      .IsRequired();
+
+                entity.HasOne(e => e.PhieuNhap) 
+                      .WithMany()
+                      .HasForeignKey(e => e.MaPhieuNhap)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.ThietBi) 
+                      .WithMany()
+                      .HasForeignKey(e => e.MaThietBi)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+            modelBuilder.Entity<ChiTietNhapDC>(entity =>
+            {
+                entity.HasKey(e => new { e.MaPhieuNhap, e.MaDungCu });
+
+                entity.Property(e => e.MaPhieuNhap)
+                      .HasMaxLength(20)
+                      .IsRequired();
+
+                entity.Property(e => e.MaDungCu)
+                      .HasMaxLength(20)
+                      .IsRequired();
+
+                entity.Property(e => e.GiaNhap)
+                      .HasColumnType("decimal(18,2)")
+                      .IsRequired();
+
+                entity.Property(e => e.SoLuongNhap)
+                      .IsRequired();
+
+                entity.HasOne(e => e.PhieuNhap) 
+                      .WithMany()
+                      .HasForeignKey(e => e.MaPhieuNhap)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.DungCu) 
+                      .WithMany()
+                      .HasForeignKey(e => e.MaDungCu)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<PhieuBaoDuong>(entity =>
+            {
+                entity.HasKey(e => e.MaPhieuBD);
+
+                entity.Property(e => e.MaPhieuBD)
+                      .HasMaxLength(20)
+                      .IsRequired();
+
+                entity.Property(e => e.MaNV)
+                      .HasMaxLength(20)
+                      .IsRequired(false);
+
+                entity.Property(e => e.NoiDung)
+                      .HasMaxLength(100)
+                      .IsRequired(false);
+
+                entity.Property(e => e.NgayBaoDuong)
+                      .IsRequired(false);
+
+                entity.Property(e => e.TongTien)
+                      .HasColumnType("decimal(18,2)")
+                      .IsRequired();
+
+                entity.HasOne(e => e.NhanVien)
+                      .WithMany() 
+                      .HasForeignKey(e => e.MaNV)
+                      .OnDelete(DeleteBehavior.Restrict);  
+            });
+            modelBuilder.Entity<ChiTietBaoDuongTB>(entity =>
+            {
+                entity.HasKey(e => new { e.MaPhieuBD, e.MaThietBi }); 
+
+                entity.Property(e => e.MaPhieuBD)
+                      .HasMaxLength(20)
+                      .IsRequired();
+
+                entity.Property(e => e.MaThietBi)
+                      .HasMaxLength(20)
+                      .IsRequired();
+
+                entity.Property(e => e.DonGia)
+                      .HasColumnType("decimal(18,2)")
+                      .IsRequired();
+                entity.HasOne(e => e.PhieuBaoDuong)
+                      .WithMany()  
+                      .HasForeignKey(e => e.MaPhieuBD)
+                      .OnDelete(DeleteBehavior.Cascade);  
+
+                entity.HasOne(e => e.ThietBi)
+                      .WithMany() 
+                      .HasForeignKey(e => e.MaThietBi)
+                      .OnDelete(DeleteBehavior.Cascade); 
+            });
+
+
         }
     }
 }

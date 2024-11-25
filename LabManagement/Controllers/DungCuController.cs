@@ -160,5 +160,32 @@ namespace LabManagement.Controllers
         {
             return _context.DungCu.Any(e => e.MaDungCu == id);
         }
+
+        // GET: api/dungcu/CheckExistence?ma={maItem}
+[HttpGet("CheckExistence")]
+public async Task<IActionResult> CheckExistence([FromQuery] string ma)
+{
+    try
+    {
+        // Check if the item exists in the database
+        bool exists = await _context.DungCu.AnyAsync(dc => dc.MaDungCu == ma);
+
+        // Return a response indicating the existence of the item
+        if (exists)
+        {
+            return Ok(new { exists = true, message = "Dụng cụ tồn tại." });
+        }
+        else
+        {
+            return NotFound(new { exists = false, message = "Không tìm thấy dụng cụ." });
+        }
+    }
+    catch (Exception ex)
+    {
+        // Handle unexpected errors
+        return StatusCode(500, new { exists = false, message = $"Lỗi: {ex.Message}" });
+    }
+}
+
     }
 }

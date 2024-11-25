@@ -14,7 +14,7 @@ namespace LabManagement.Controllers
     public class ThietBiController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        private const string ImageDirectory = @"D:\Project\LabManagement\LabManagement\LabManagement\Image\ThietBi";
+        private const string ImageDirectory = @"D:\Ky1_2024_2025\DoAnChuyenNganh\BE\LabManagement\LabManagement\Image\ThietBi";
         private const string ImageBaseUrl = "http://localhost:5123/images/ThietBi";
 
         public ThietBiController(ApplicationDbContext context)
@@ -152,6 +152,24 @@ namespace LabManagement.Controllers
             {
                 return StatusCode(500, $"Lỗi: {ex.Message}");
             }
+        }
+        // GET: api/thietbi/CheckExistence?ma={maItem}
+        [HttpGet("CheckExistence")]
+        public async Task<IActionResult> CheckExistence([FromQuery] string ma)
+        {
+            if (string.IsNullOrEmpty(ma))
+            {
+                return BadRequest("Mã không được để trống.");
+            }
+
+            var exists = await _context.ThietBi.AnyAsync(tb => tb.MaThietBi == ma);
+
+            if (exists)
+            {
+                return Ok(new { Exists = true, Message = "Thiết bị tồn tại trong hệ thống." });
+            }
+
+            return NotFound(new { Exists = false, Message = "Không tìm thấy thiết bị trong hệ thống." });
         }
 
 

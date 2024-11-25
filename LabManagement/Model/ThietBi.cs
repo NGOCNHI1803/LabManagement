@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace LabManagement.Model
 {
@@ -35,10 +36,12 @@ namespace LabManagement.Model
 
         // Foreign key cho bảng LoaiThietBi
         [ForeignKey("MaLoaiThietBi")]
+        [JsonIgnore]
         public LoaiThietBi? LoaiThietBi { get; set; } // Đối tượng loại thiết bị
 
         // Foreign key cho bảng NhaCungCap
         [ForeignKey("MaNCC")]
+        [JsonIgnore]
         public NhaCungCap? NhaCungCap { get; set; } // Đối tượng nhà cung cấp
         //public ICollection<PhieuDeXuat> PhieuDeXuat { get; set; }
 
