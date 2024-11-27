@@ -33,7 +33,6 @@ namespace LabManagement.Data
         public DbSet<PhieuBaoDuong> PhieuBaoDuong { get; set; }
         public DbSet<ChiTietBaoDuongTB> ChiTietBaoDuongTB { get; set; }
         public DbSet<PhieuDangKi> PhieuDangKi { get; set; }
-        public DbSet<DuyetPhieuDK> DuyetPhieuDK { get; set; }
         public DbSet<DangKiDungCu> DangKiDungCu { get; set; }
         public DbSet<DangKiThietBi> DangKiThietBi { get; set; }
 
