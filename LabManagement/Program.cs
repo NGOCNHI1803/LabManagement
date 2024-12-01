@@ -77,18 +77,21 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Enable static files
+
 app.UseStaticFiles();
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new PhysicalFileProvider(@"D:\HK7\DoAnChuyenNganh\LabManagement\LabManagement\Image\DungCu"),
-    RequestPath = "/images/DungCu"
-});
+
 
 app.UseStaticFiles(new StaticFileOptions
 {
-    FileProvider = new PhysicalFileProvider(@"D:\HK7\DoAnChuyenNganh\LabManagement\LabManagement\Image\ThietBi"),
-    RequestPath = "/images/ThietBi"
+    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", "DungCu")),
+    RequestPath = "/images/DungCu" // URL accessible to the users
+});
+// Serve images from the Image/ThietBi folder in wwwroot
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", "ThietBi")),
+    RequestPath = "/images/ThietBi" // URL accessible to the users
+
 });
 
 app.UseHttpsRedirection();
