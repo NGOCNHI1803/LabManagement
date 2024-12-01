@@ -28,6 +28,8 @@ namespace LabManagement.Model
 
         public string? MaNCC { get; set; }
 
+        public string? MaPhong { get; set; }
+
         public string? HinhAnh { get; set; } // Đường dẫn hình ảnh
 
         [NotMapped]
@@ -41,6 +43,10 @@ namespace LabManagement.Model
         [ForeignKey("MaNCC")]
         public NhaCungCap? NhaCungCap { get; set; } // Đối tượng nhà cung cấp
         //public ICollection<PhieuDeXuat> PhieuDeXuat { get; set; }
+
+        [ForeignKey("MaPhong")]
+
+        public PhongThiNghiem? PhongThiNghiem { get; set; }
 
     }
 }

@@ -38,8 +38,10 @@ namespace LabManagement.Model
         
         public string? MaNCC { get; set; } // Mã nhà cung cấp
 
+        public string? MaPhong { get; set; }
+
         // Thuộc tính hình ảnh
-        
+
         public string? HinhAnh { get; set; } // Đường dẫn hình ảnh
 
         // Thuộc tính ảo để lấy URL hình ảnh
@@ -52,5 +54,9 @@ namespace LabManagement.Model
         // Foreign key cho bảng NhaCungCap
         [ForeignKey("MaNCC")]
         public NhaCungCap? NhaCungCap { get; set; } // Đối tượng nhà cung cấp
+
+        [ForeignKey("MaPhong")]
+
+        public PhongThiNghiem? PhongThiNghiem { get; set; }
     }
 }
