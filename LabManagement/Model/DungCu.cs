@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace LabManagement.Model
 {
@@ -49,10 +50,12 @@ namespace LabManagement.Model
         public string? HinhAnhUrl => string.IsNullOrEmpty(HinhAnh) ? null : $"http://localhost:5123/images/DungCu/{HinhAnh}";
         // Foreign key cho bảng LoaiDungCu
         [ForeignKey("MaLoaiDC")]
+        [JsonIgnore]
         public LoaiDungCu? LoaiDungCu { get; set; } // Đối tượng loại dụng cụ
 
         // Foreign key cho bảng NhaCungCap
         [ForeignKey("MaNCC")]
+        [JsonIgnore]
         public NhaCungCap? NhaCungCap { get; set; } // Đối tượng nhà cung cấp
 
         [ForeignKey("MaPhong")]
