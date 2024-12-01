@@ -4,25 +4,34 @@ using System.Text.Json.Serialization;
 
 namespace LabManagement.Model
 {
-    public class DangKiDungCu
+    public class ThoiGianSuDung
     {
         [Key, Column(Order = 0)]
         public string? MaPhieuDK { get; set; }
 
         [Key, Column(Order = 1)]
-        public string? MaDungCu { get; set; }
-        public int SoLuong { get; set; }
-        public DateTime? NgayDangKi { get; set; }
+        public string? MaThietBi {  get; set; }
+
+        public string? MaNV { get; set; }  // Mã nhân viên phê duyệt
+
+        public DateTime? NgayBatDau { get; set; }
 
         public DateTime? NgayKetThuc { get; set; }
+
+        public int SoGio {  get; set; }
 
         [ForeignKey("MaPhieuDK")]
         [JsonIgnore]
         public PhieuDangKi? PhieuDangKi { get; set; }  // Đối tượng phiếu đăng ký
 
         // Foreign key cho bảng DungCu
-        [ForeignKey("MaDungCu")]
+        [ForeignKey("MaThietBi")]
         [JsonIgnore]
-        public DungCu? DungCu { get; set; }  // Đối tượng dụng cụ
+        public ThietBi? ThietBi { get; set; }  // Đối tượng dụng cụ
+
+        [ForeignKey("MaNV")]
+        [JsonIgnore]
+        public NhanVien? NhanVien { get; set; }
+
     }
 }

@@ -29,6 +29,7 @@ namespace LabManagement.Controllers
             var thietBis = await _context.ThietBi
                 .Include(tb => tb.LoaiThietBi)
                 .Include(tb => tb.NhaCungCap)
+                .Include(tb => tb.PhongThiNghiem)
                 .ToListAsync();
 
             return thietBis;
@@ -41,6 +42,7 @@ namespace LabManagement.Controllers
             var thietBi = await _context.ThietBi
                 .Include(tb => tb.LoaiThietBi)
                 .Include(tb => tb.NhaCungCap)
+                .Include(tb => tb.PhongThiNghiem)
                 .FirstOrDefaultAsync(tb => tb.MaThietBi == id);
 
             if (thietBi == null)
@@ -139,6 +141,7 @@ namespace LabManagement.Controllers
                     .Where(tb => tb.MaLoaiThietBi == maLoaiThietBi)
                     .Include(tb => tb.LoaiThietBi)
                     .Include(tb => tb.NhaCungCap)
+                    .Include(tb => tb.PhongThiNghiem)
                     .ToListAsync();
 
                 if (!thietBis.Any())
