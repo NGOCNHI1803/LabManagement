@@ -45,7 +45,7 @@ namespace LabManagement.Model
         [ForeignKey("MaNCC")]
         [JsonIgnore]
         public NhaCungCap? NhaCungCap { get; set; } // Đối tượng nhà cung cấp
-        //public ICollection<PhieuDeXuat> PhieuDeXuat { get; set; }
+        
 
         [ForeignKey("MaPhong")]
 

@@ -77,7 +77,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Enable static files
+
+app.UseStaticFiles();
+
 
 app.UseStaticFiles(new StaticFileOptions
 {
@@ -89,6 +91,7 @@ app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", "ThietBi")),
     RequestPath = "/images/ThietBi" // URL accessible to the users
+
 });
 
 app.UseHttpsRedirection();
