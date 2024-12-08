@@ -16,6 +16,12 @@ namespace LabManagement.Model
 
         public DateTime? NgayKetThuc { get; set; }
 
+        public string? TrangThaiSuDung { get; set; }
+
+        public string? TinhTrangSuDung { get; set; }
+        public DateTime? NgayBatDauThucTe { get; set; }
+        public DateTime? NgayKetThucThucTe { get; set; }
+
         [ForeignKey("MaPhieuDK")]
         [JsonIgnore]
         public PhieuDangKi? PhieuDangKi { get; set; }  // Đối tượng phiếu đăng ký

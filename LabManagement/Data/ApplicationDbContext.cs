@@ -362,6 +362,7 @@ namespace LabManagement.Data
                 entity.Property(e => e.MaPhieuDK).HasMaxLength(20).IsRequired();
                 entity.Property(e => e.LyDoDK).HasMaxLength(100).IsRequired();
                 entity.Property(e => e.MaNV).HasMaxLength(20).IsRequired();
+                entity.Property(e => e.MaPhong).HasMaxLength(20).IsRequired();
                 entity.Property(e => e.GhiChu).HasMaxLength(255);
                 entity.Property(e => e.TrangThai).HasMaxLength(50);
                 entity.Property(e => e.NgayLap).IsRequired(false);
@@ -371,6 +372,11 @@ namespace LabManagement.Data
                       .WithMany()
                       .HasForeignKey(e => e.MaNV)
                       .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.PhongThiNghiem)
+                            .WithMany()
+                            .HasForeignKey(e => e.MaPhong)
+                            .OnDelete(DeleteBehavior.Restrict);
 
             });
             // Cấu hình cho DuyetPhieuDK
@@ -400,6 +406,10 @@ namespace LabManagement.Data
                 entity.Property(e => e.SoLuong).IsRequired();
                 entity.Property(e => e.NgayDangKi).IsRequired();
                 entity.Property(e => e.NgayKetThuc).IsRequired();
+                entity.Property(e => e.TrangThaiSuDung).HasMaxLength(50);
+                entity.Property(e => e.TinhTrangSuDung).HasMaxLength(255).IsRequired();
+                entity.Property(e => e.NgayBatDauThucTe).IsRequired(false);
+                entity.Property(e => e.NgayKetThucThucTe).IsRequired(false);
 
                 entity.HasOne(e => e.PhieuDangKi)
                       .WithMany()
@@ -417,6 +427,10 @@ namespace LabManagement.Data
                 entity.HasKey(e => new { e.MaPhieuDK, e.MaThietBi });
                 entity.Property(e => e.NgayDangKi).IsRequired();
                 entity.Property(e => e.NgayKetThuc).IsRequired();
+                entity.Property(e => e.TrangThaiSuDung).HasMaxLength(50);
+                entity.Property(e => e.TinhTrangSuDung).HasMaxLength(255).IsRequired();
+                entity.Property(e => e.NgayBatDauThucTe).IsRequired(false);
+                entity.Property(e => e.NgayKetThucThucTe).IsRequired(false);
 
                 entity.HasOne(e => e.PhieuDangKi)
                       .WithMany()

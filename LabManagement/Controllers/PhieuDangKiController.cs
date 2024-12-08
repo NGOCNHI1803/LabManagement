@@ -21,6 +21,7 @@ namespace LabManagement.Controllers
         {
             var phieuDeXuats = await _context.PhieuDangKi
                 .Include(p => p.NhanVien)
+                .Include(p => p.PhongThiNghiem)
                 .ToListAsync();
 
             return Ok(phieuDeXuats);
@@ -65,6 +66,7 @@ namespace LabManagement.Controllers
             // Find the proposal with the given MaPhieu
             var phieuDKi = await _context.PhieuDangKi
                 .Include(p => p.NhanVien) // Include NhanVien details
+                .Include(p => p.PhongThiNghiem)
                 .FirstOrDefaultAsync(p => p.MaPhieuDK == maPhieu); // Search by MaPhieu
 
             // If the proposal is not found, return a 404 Not Found

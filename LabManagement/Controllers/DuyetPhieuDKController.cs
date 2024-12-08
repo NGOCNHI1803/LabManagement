@@ -49,22 +49,29 @@ namespace LabManagement.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(DuyetPhieuDK duyetPhieu)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
-            }
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
 
-            // Check if the MaPhieu already exists in the database
-            var existingPhieu = await _context.DuyetPhieuDK.FindAsync(duyetPhieu.MaPhieuDK);
-            if (existingPhieu != null)
+                // Check if the MaPhieu already exists in the database
+                var existingPhieu = await _context.DuyetPhieuDK.FindAsync(duyetPhieu.MaPhieuDK);
+                if (existingPhieu != null)
+                {
+                    return Conflict(new { message = "Phiếu đăng kí này đã được duyệt." });
+                }
+
+                _context.DuyetPhieuDK.Add(duyetPhieu);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction(nameof(GetById), new { id = duyetPhieu.MaPhieuDK }, duyetPhieu);
+            }
+            catch (Exception ex)
             {
-                return Conflict(new { message = "Phiếu đăng kí này đã được duyệt." });
+                return StatusCode(500, new { message = "Internal Server Error", error = ex.Message });
             }
-
-            _context.DuyetPhieuDK.Add(duyetPhieu);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetById), new { id = duyetPhieu.MaPhieuDK }, duyetPhieu);
         }
     }
-}
+    }

@@ -1,6 +1,6 @@
 ﻿namespace LabManagement.Controllers
 {
-    public class LuanChuyenDC
+    public class LuanChuyenTBController
     {
     }
 }

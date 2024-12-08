@@ -31,6 +31,7 @@ namespace LabManagement.Controllers
             var dungCus = await _context.DungCu
                 .Include(dc => dc.LoaiDungCu)
                 .Include(dc => dc.NhaCungCap)
+                .Include(tb => tb.PhongThiNghiem)
                 .ToListAsync();
 
             return dungCus;
@@ -43,6 +44,7 @@ namespace LabManagement.Controllers
             var dungCu = await _context.DungCu
                 .Include(dc => dc.LoaiDungCu)
                 .Include(dc => dc.NhaCungCap)
+                .Include(tb => tb.PhongThiNghiem)
                 .FirstOrDefaultAsync(dc => dc.MaDungCu == id);
 
             if (dungCu == null)

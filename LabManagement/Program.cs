@@ -1,4 +1,4 @@
-using LabManagement;
+﻿using LabManagement;
 using LabManagement.Data;
 using LabManagement.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -60,11 +60,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Add CORS policy
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowLocalhost3000", builder =>
+    options.AddPolicy("AllowAll", policy =>
     {
-        builder.WithOrigins("http://localhost:3000") // Adjust to match your frontend URL
-               .AllowAnyMethod()
-               .AllowAnyHeader();
+        policy.AllowAnyOrigin() // Cho phép tất cả các origin
+              .AllowAnyMethod() // Cho phép tất cả các phương thức (GET, POST, PUT, DELETE, v.v.)
+              .AllowAnyHeader(); // Cho phép tất cả các headers
     });
 });
 
@@ -94,7 +94,7 @@ app.UseStaticFiles(new StaticFileOptions
 app.UseHttpsRedirection();
 
 // Apply CORS policy
-app.UseCors("AllowLocalhost3000");
+app.UseCors("AllowAll"); // Áp dụng chính sách CORS
 
 app.UseAuthentication();
 app.UseAuthorization();
