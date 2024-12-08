@@ -7,44 +7,48 @@ using System.Threading.Tasks;
 [ApiController]
 public class ImageUploadController : ControllerBase
 {
-    private readonly string _dungCuPath = @"D:\Ky1_2024_2025\DoAnChuyenNganh\BE\LabManagement\LabManagement\Image\DungCu";
-    private readonly string _thietBiPath = @"D:\Ky1_2024_2025\DoAnChuyenNganh\BE\LabManagement\LabManagement\Image\ThietBi";
+    private readonly string _basePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image");
 
-    [HttpPost("uploadDungCu")]
-    public async Task<IActionResult> UploadDungCu(IFormFile file)
+    public ImageUploadController()
     {
-        if (file == null || file.Length == 0)
-        {
-            return BadRequest("Không có tệp hình ảnh nào được chọn.");
-        }
-
-        var filePath = Path.Combine(_dungCuPath, file.FileName);
-
-        // Lưu file vào thư mục "DungCu"
-        using (var stream = new FileStream(filePath, FileMode.Create))
-        {
-            await file.CopyToAsync(stream);
-        }
-
-        return Ok(new { FilePath = $"/images/DungCu/{file.FileName}" });
+        // Đảm bảo các thư mục đã tồn tại
+        Directory.CreateDirectory(Path.Combine(_basePath, "DungCu"));
+        Directory.CreateDirectory(Path.Combine(_basePath, "ThietBi"));
     }
 
-    [HttpPost("uploadThietBi")]
-    public async Task<IActionResult> UploadThietBi(IFormFile file)
+    // Phương thức chung để upload file
+    private async Task<IActionResult> UploadFile(IFormFile file, string folder)
     {
         if (file == null || file.Length == 0)
         {
             return BadRequest("Không có tệp hình ảnh nào được chọn.");
         }
 
-        var filePath = Path.Combine(_thietBiPath, file.FileName);
+        // Xác định đường dẫn lưu file
+        var folderPath = Path.Combine(_basePath, folder);
+        var filePath = Path.Combine(folderPath, file.FileName);
 
-        // Lưu file vào thư mục "ThietBi"
+        // Lưu file vào thư mục tương ứng
         using (var stream = new FileStream(filePath, FileMode.Create))
         {
             await file.CopyToAsync(stream);
         }
 
-        return Ok(new { FilePath = $"/images/ThietBi/{file.FileName}" });
+        // Trả về đường dẫn URL mà người dùng có thể sử dụng để truy cập file
+        return Ok(new { FilePath = $"/images/{folder}/{file.FileName}" });
+    }
+
+    // Endpoint upload DungCu
+    [HttpPost("uploadDungCu")]
+    public Task<IActionResult> UploadDungCu(IFormFile file)
+    {
+        return UploadFile(file, "DungCu");
+    }
+
+    // Endpoint upload ThietBi
+    [HttpPost("uploadThietBi")]
+    public Task<IActionResult> UploadThietBi(IFormFile file)
+    {
+        return UploadFile(file, "ThietBi");
     }
 }

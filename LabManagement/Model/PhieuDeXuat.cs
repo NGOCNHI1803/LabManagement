@@ -10,8 +10,6 @@ namespace LabManagement.Model
         [Key]
         public string? MaPhieu { get; set; }  // Mã phiếu đề xuất
 
-        public string? MaThietBi { get; set; }  // Mã thiết bị
-
         public string? MaNV { get; set; }  // Mã nhân viên tạo phiếu
 
         public DateTime? NgayTao { get; set; }  // Ngày tạo phiếu
@@ -23,11 +21,6 @@ namespace LabManagement.Model
         
         public string? TrangThai { get; set; }  // Trạng thái phiếu (mặc định là 'Chưa phê duyệt')
 
-        // Foreign key cho bảng ThietBi
-     
-        [ForeignKey("MaThietBi")]
-        [JsonIgnore]
-        public ThietBi? ThietBi { get; set; }  // Đối tượng thiết bị
 
         // Foreign key cho bảng NhanVien
         [ForeignKey("MaNV")]

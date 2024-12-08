@@ -13,8 +13,6 @@ namespace LabManagement.Model
 
         public string? MaLoaiThietBi { get; set; } // Mã loại thiết bị
 
-        public int SoLuong { get; set; } // Số lượng
-
         public string? TinhTrang { get; set; } // Tình trạng
 
         public DateTime? NgayCapNhat { get; set; } // Ngày cập nhật
@@ -32,6 +30,7 @@ namespace LabManagement.Model
         public string? MaPhong { get; set; }
 
         public string? HinhAnh { get; set; } // Đường dẫn hình ảnh
+        public bool isDeleted { get; set; } = false;
 
         [NotMapped]
         public string? HinhAnhUrl => string.IsNullOrEmpty(HinhAnh) ? null : $"http://localhost:5123/images/ThietBi/{HinhAnh}";

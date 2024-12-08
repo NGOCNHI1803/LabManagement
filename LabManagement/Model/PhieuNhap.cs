@@ -14,9 +14,13 @@ namespace LabManagement.Model
         public DateTime? NgayNhap { get; set; }  
 
         public decimal TongTien { get; set; }  
+        public string? MaPhieu { get; set; }
 
         [ForeignKey("MaNV")]
         [JsonIgnore]
-        public NhanVien? NhanVien { get; set; }  
+        public NhanVien? NhanVien { get; set; }
+        [ForeignKey("MaPhieu")]
+        [JsonIgnore]
+        public PhieuDeXuat? PhieuDeXuat { get; set; }
     }
 }

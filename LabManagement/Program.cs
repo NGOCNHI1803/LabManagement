@@ -60,9 +60,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Add CORS policy
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowLocalhost3000", builder =>
+    options.AddPolicy("AllowAll", builder =>
     {
-        builder.WithOrigins("http://localhost:3000") // Adjust to match your frontend URL
+        builder.AllowAnyOrigin()
                .AllowAnyMethod()
                .AllowAnyHeader();
     });
@@ -94,7 +94,7 @@ app.UseStaticFiles(new StaticFileOptions
 app.UseHttpsRedirection();
 
 // Apply CORS policy
-app.UseCors("AllowLocalhost3000");
+app.UseCors("AllowAll");
 
 app.UseAuthentication();
 app.UseAuthorization();
