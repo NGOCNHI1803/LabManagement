@@ -86,5 +86,82 @@ namespace LabManagement.Controllers
 
             return Ok(chiTietDangKiDungCus);
         }
+        // Phương thức cập nhật trạng thái thiết bị sử dụng PUT
+        [HttpPut("update-tool-status/{maPhieuDK}")]
+        public async Task<IActionResult> UpdateToolStatus(string maPhieuDK, [FromBody] ToolStatusUpdateRequest request)
+        {
+            try
+            {
+                // Kiểm tra phiếu đăng ký
+                var phieuDangKi = await _context.PhieuDangKi.FindAsync(maPhieuDK);
+                if (phieuDangKi == null)
+                {
+                    // Trả về lỗi dưới dạng JSON
+                    return NotFound(new { message = "Phiếu đăng ký không tồn tại." });
+                }
+
+                // Cập nhật trạng thái trong bảng DangKiThietBi
+                var dangKiDungCu = await _context.DangKiDungCu
+                    .Where(d => d.MaPhieuDK == maPhieuDK)
+                    .ToListAsync();
+
+                if (dangKiDungCu.Count == 0)
+                {
+                    // Trả về lỗi dưới dạng JSON
+                    return NotFound(new { message = "Không tìm thấy thông tin dụng cụ." });
+                }
+
+                // Lặp qua tất cả thiết bị và cập nhật trạng thái
+                foreach (var item in dangKiDungCu)
+                {
+                    // Trạng thái đang sử dụng
+                    if (request.TrangThaiSuDung == "Đang sử dụng" && item.TrangThaiSuDung != "Đang sử dụng")
+                    {
+                        item.TrangThaiSuDung = "Đang sử dụng";
+                        item.NgayBatDauThucTe = DateTime.Now;  // Ghi nhận thời gian bắt đầu
+                    }
+                    // Trạng thái hoàn thành sử dụng
+                    else if (request.TrangThaiSuDung == "Hoàn thành sử dụng" && item.TrangThaiSuDung == "Đang sử dụng")
+                    {
+                        item.TrangThaiSuDung = "Hoàn thành sử dụng";
+                        item.NgayKetThucThucTe = DateTime.Now;  // Ghi nhận thời gian kết thúc
+                    }
+                    // Trạng thái quá hạn sử dụng
+                    else if (request.TrangThaiSuDung == "Quá hạn sử dụng" && item.TrangThaiSuDung != "Quá hạn sử dụng")
+                    {
+                        if (item.NgayKetThucThucTe.HasValue && item.NgayKetThucThucTe < DateTime.Now)
+                        {
+                            item.TrangThaiSuDung = "Quá hạn sử dụng";
+                        }
+                        else
+                        {
+                            return BadRequest(new { message = "Chưa đến thời điểm quá hạn sử dụng." });
+                        }
+                    
+                    }
+                    item.TinhTrangSuDung = request.TinhTrangSuDung;
+                    _context.DangKiDungCu.Update(item);
+                }
+
+                // Lưu lại các thay đổi vào cơ sở dữ liệu
+                await _context.SaveChangesAsync();
+
+                // Trả về thông báo thành công dưới dạng JSON
+                return Ok(new { message = "Cập nhật trạng thái thành công." });
+            }
+            catch (Exception ex)
+            {
+                // Trả về lỗi nội bộ dưới dạng JSON
+                return StatusCode(500, new { message = "Internal server error: " + ex.Message });
+            }
+        }
+
+
+        // Đối tượng nhận vào yêu cầu cập nhật trạng thái thiết bị
+        public class ToolStatusUpdateRequest
+        {
+            public string? TrangThaiSuDung { get; set; }  // Trạng thái mới
+            public string? TinhTrangSuDung { get; set; }
+        }
     }
 }

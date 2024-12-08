@@ -174,7 +174,6 @@ namespace LabManagement.Controllers
 
             return NotFound(new { Exists = false, Message = "Không tìm thấy thiết bị trong hệ thống." });
         }
-
         // In ThietBiController.cs
         [HttpPost("BatchUpdateIsDeleted")]
         public async Task<IActionResult> BatchUpdateIsDeleted([FromBody] List<string> maThietBiList)
@@ -199,6 +198,28 @@ namespace LabManagement.Controllers
 
             return Ok(new { Message = "Cập nhật thành công." });
         }
+          // GET: api/thietbi/search
+        [HttpGet("search")]
+        public async Task<ActionResult<IEnumerable<ThietBi>>> SearchThietBi(string query)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                return BadRequest("Query không được để trống.");
+            }
+
+            var results = await _context.ThietBi
+                .Where(tb => tb.MaThietBi.Contains(query) || tb.TenThietBi.Contains(query))
+                .ToListAsync();
+
+            if (!results.Any())
+            {
+                return NotFound("Không tìm thấy thiết bị phù hợp.");
+            }
+
+            return Ok(results);
+        }
+
+
 
     }
 }

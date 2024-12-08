@@ -12,6 +12,8 @@ namespace LabManagement.Model
 
         public string? MaNV { get; set; } // Mã nhân viên
 
+        public string? MaPhong { get; set; }
+
         public DateTime? NgayLap { get; set; }  // Ngày sử dụng thiết bị
 
         public string? GhiChu { get; set; }  // Thông tin bổ sung
@@ -27,6 +29,10 @@ namespace LabManagement.Model
         [ForeignKey("MaNV")]
         [JsonIgnore]
         public NhanVien? NhanVien { get; set; } // Đối tượng nhân viên
+
+        [ForeignKey("MaPhong")]
+        [JsonIgnore]
+        public PhongThiNghiem? PhongThiNghiem { get; set; }
 
         
     }

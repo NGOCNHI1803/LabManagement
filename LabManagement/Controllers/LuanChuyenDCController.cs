@@ -1,6 +1,6 @@
 ﻿namespace LabManagement.Controllers
 {
-    public class PhieuPhanBoTB
+    public class LuanChuyenDCController
     {
     }
 }
