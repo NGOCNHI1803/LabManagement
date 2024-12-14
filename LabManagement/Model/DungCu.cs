@@ -39,7 +39,7 @@ namespace LabManagement.Model
         
         public string? MaNCC { get; set; } // Mã nhà cung cấp
 
-        public string? MaPhong { get; set; }
+        //public string? MaPhong { get; set; }
 
         // Thuộc tính hình ảnh
 
@@ -58,8 +58,8 @@ namespace LabManagement.Model
         [JsonIgnore]
         public NhaCungCap? NhaCungCap { get; set; } // Đối tượng nhà cung cấp
 
-        [ForeignKey("MaPhong")]
+        //[ForeignKey("MaPhong")]
 
-        public PhongThiNghiem? PhongThiNghiem { get; set; }
+        //public PhongThiNghiem? PhongThiNghiem { get; set; }
     }
 }

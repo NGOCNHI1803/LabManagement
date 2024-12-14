@@ -92,37 +92,37 @@ namespace LabManagement.Controllers
             }
         }
 
-        // GET: api/PhongThiNghiem/{maPhong}/ThietBi
-        [HttpGet("{maPhong}/ThietBi")]
-        public async Task<ActionResult<IEnumerable<ThietBi>>> GetThietBiInPhongThiNghiem(string maPhong)
-        {
-            if (string.IsNullOrEmpty(maPhong))
-            {
-                return BadRequest(new { message = "Mã phòng không được để trống." });
-            }
+        //// GET: api/PhongThiNghiem/{maPhong}/ThietBi
+        //[HttpGet("{maPhong}/ThietBi")]
+        //public async Task<ActionResult<IEnumerable<ThietBi>>> GetThietBiInPhongThiNghiem(string maPhong)
+        //{
+        //    if (string.IsNullOrEmpty(maPhong))
+        //    {
+        //        return BadRequest(new { message = "Mã phòng không được để trống." });
+        //    }
 
-            try
-            {
-                // Tìm các thiết bị trong phòng thí nghiệm
-                var thietBiList = await _context.ThietBi
-                    .Where(tb => tb.MaPhong == maPhong)
-                    .Include(tb => tb.LoaiThietBi)
-                    .Include(tb => tb.NhaCungCap)
-                    .Include(tb => tb.PhongThiNghiem)
-                    .ToListAsync();
+        //    try
+        //    {
+        //        // Tìm các thiết bị trong phòng thí nghiệm
+        //        var thietBiList = await _context.ThietBi
+        //            .Where(tb => tb.MaPhong == maPhong)
+        //            .Include(tb => tb.LoaiThietBi)
+        //            .Include(tb => tb.NhaCungCap)
+        //            .Include(tb => tb.PhongThiNghiem)
+        //            .ToListAsync();
 
-                if (!thietBiList.Any())
-                {
-                    return NotFound(new { message = $"Không có thiết bị nào trong phòng thí nghiệm với mã {maPhong}." });
-                }
+        //        if (!thietBiList.Any())
+        //        {
+        //            return NotFound(new { message = $"Không có thiết bị nào trong phòng thí nghiệm với mã {maPhong}." });
+        //        }
 
-                return Ok(thietBiList);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "Đã xảy ra lỗi server.", error = ex.Message });
-            }
-        }
+        //        return Ok(thietBiList);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, new { message = "Đã xảy ra lỗi server.", error = ex.Message });
+        //    }
+        //}
         // GET: api/PhongThiNghiem/ThietBi/{maThietBi}
         [HttpGet("ThietBi/{maThietBi}")]
         public async Task<ActionResult<PhongThiNghiem>> GetPhongThiNghiemByDeviceId(string maThietBi)
@@ -137,7 +137,7 @@ namespace LabManagement.Controllers
                 // Tìm thiết bị với mã đã cho
                 var thietBi = await _context.ThietBi
                     .Where(tb => tb.MaThietBi == maThietBi)
-                    .Include(tb => tb.PhongThiNghiem) // Lấy thông tin phòng thí nghiệm của thiết bị
+                    //.Include(tb => tb.PhongThiNghiem) // Lấy thông tin phòng thí nghiệm của thiết bị
                     .Include(tb => tb.LoaiThietBi)
                     .Include(tb => tb.NhaCungCap)
                     .FirstOrDefaultAsync();
@@ -147,7 +147,7 @@ namespace LabManagement.Controllers
                     return NotFound(new { message = $"Không tìm thấy thiết bị với mã {maThietBi}." });
                 }
 
-                return Ok(thietBi.PhongThiNghiem); // Trả về thông tin phòng thí nghiệm của thiết bị
+                return Ok(thietBi); // Trả về thông tin phòng thí nghiệm của thiết bị
             }
             catch (Exception ex)
             {
