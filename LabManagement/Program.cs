@@ -10,8 +10,7 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-// Add services to the container.
+// Add services to the container
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -70,38 +69,35 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
+app.UseHttpsRedirection();
 
-app.UseStaticFiles();
-
+// Serve static files (images)
+app.UseStaticFiles();  // For general static files
 
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", "DungCu")),
-    RequestPath = "/images/DungCu" // URL accessible to the users
+    RequestPath = "/images/DungCu"  // URL accessible to the users
 });
-// Serve images from the Image/ThietBi folder in wwwroot
+
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", "ThietBi")),
-    RequestPath = "/images/ThietBi" // URL accessible to the users
-
+    RequestPath = "/images/ThietBi"  // URL accessible to the users
 });
-
-app.UseHttpsRedirection();
 
 // Apply CORS policy
 app.UseCors("AllowAll");
 
 app.UseAuthentication();
 app.UseAuthorization();
-
 
 app.MapControllers();
 
