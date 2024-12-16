@@ -146,6 +146,7 @@ namespace LabManagement.Controllers
 
                 return CreatedAtAction(nameof(GetChiTietDeXuatThietBi), new { id = chiTietDeXuatThietBi.MaCTDeXuatTB }, chiTietDeXuatThietBi);
             }
+       
         }
     }
 }

@@ -146,6 +146,54 @@ namespace LabManagement.Controllers
             // Trả về thông tin nhân viên
             return Ok(nhanVien);
         }
+        // POST: api/NhanVien
+        [HttpPost]
+        public async Task<ActionResult<NhanVien>> PostNhanVien(NhanVien nhanVien)
+        {
+            // Hash the password before saving
+            nhanVien.MatKhau = BCrypt.Net.BCrypt.HashPassword(nhanVien.MatKhau);
+
+            _context.NhanVien.Add(nhanVien);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetNhanVienById), new { id = nhanVien.MaNV }, nhanVien);
+        }
+
+        // PUT: api/NhanVien/{id}
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutNhanVien(string id, NhanVien nhanVien)
+        {
+            if (id != nhanVien.MaNV)
+            {
+                return BadRequest(new { message = "Mã nhân viên không khớp" });
+            }
+
+            // Hash the password if it has been updated
+            if (!string.IsNullOrEmpty(nhanVien.MatKhau))
+            {
+                nhanVien.MatKhau = BCrypt.Net.BCrypt.HashPassword(nhanVien.MatKhau);
+            }
+
+            _context.Entry(nhanVien).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.NhanVien.Any(e => e.MaNV == id))
+                {
+                    return NotFound(new { message = "Không tìm thấy nhân viên với mã này" });
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
 
 
 

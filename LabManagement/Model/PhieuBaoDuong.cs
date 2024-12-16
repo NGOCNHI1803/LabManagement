@@ -10,7 +10,7 @@ namespace LabManagement.Model
         public string? MaPhieuBD { get; set; }  // Mã phiếu bảo dưỡng
 
         public string? MaNV { get; set; }  // Mã nhân viên
-
+        public string? MaNCC { get; set; }
         public string? NoiDung { get; set; }  // Nội dung bảo dưỡng
 
         public DateTime? NgayBaoDuong { get; set; }  // Ngày bảo dưỡng
@@ -20,5 +20,8 @@ namespace LabManagement.Model
         [ForeignKey("MaNV")]
         [JsonIgnore]
         public NhanVien? NhanVien { get; set; }  // Tham chiếu đến nhân viên
+        [ForeignKey("MaNCC")]
+        [JsonIgnore]
+        public NhaCungCap? NhaCungCap { get; set; }  // Tham chiếu đến nhân viên
     }
 }

@@ -23,8 +23,6 @@ namespace LabManagement.Model
         public string? TinhTrang { get; set; } // Tình trạng
 
        
-       // public string? ViTri { get; set; } // Vị trí
-
         public DateTime? NgayCapNhat { get; set; } // Ngày cập nhật
 
         public DateTime? NgaySX { get; set; } // Ngày sản xuất
@@ -39,7 +37,6 @@ namespace LabManagement.Model
         
         public string? MaNCC { get; set; } // Mã nhà cung cấp
 
-        //public string? MaPhong { get; set; }
 
         // Thuộc tính hình ảnh
 
@@ -58,8 +55,5 @@ namespace LabManagement.Model
         [JsonIgnore]
         public NhaCungCap? NhaCungCap { get; set; } // Đối tượng nhà cung cấp
 
-        //[ForeignKey("MaPhong")]
-
-        //public PhongThiNghiem? PhongThiNghiem { get; set; }
     }
 }
