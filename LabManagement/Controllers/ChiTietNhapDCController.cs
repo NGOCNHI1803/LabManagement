@@ -84,5 +84,8 @@ namespace LabManagement.Controllers
 
             return Ok(chiTietNhapDCs);
         }
+       
+
+
     }
 }

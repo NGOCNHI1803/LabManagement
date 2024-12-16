@@ -60,11 +60,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Add CORS policy
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
+    options.AddPolicy("AllowAll", builder =>
     {
-        policy.AllowAnyOrigin() // Cho phép tất cả các origin
-              .AllowAnyMethod() // Cho phép tất cả các phương thức (GET, POST, PUT, DELETE, v.v.)
-              .AllowAnyHeader(); // Cho phép tất cả các headers
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
     });
 });
 
@@ -97,7 +97,7 @@ app.UseStaticFiles(new StaticFileOptions
 app.UseHttpsRedirection();
 
 // Apply CORS policy
-app.UseCors("AllowAll"); // Áp dụng chính sách CORS
+app.UseCors("AllowAll");
 
 app.UseAuthentication();
 app.UseAuthorization();

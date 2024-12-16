@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using LabManagement.Data;
+﻿using LabManagement.Data;
 using LabManagement.Model;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace LabManagement.Controllers
@@ -18,75 +18,127 @@ namespace LabManagement.Controllers
 
         // GET: api/ChiTietDeXuatDungCu
         [HttpGet]
-        public async Task<IActionResult> GetChiTietDeXuatDungCu()
+        public async Task<ActionResult<IEnumerable<ChiTietDeXuatDungCu>>> GetChiTietDeXuatDungCus()
         {
-            var chiTietDeXuatDungCus = await _context.ChiTietDeXuatDungCu
-                .Include(c => c.PhieuDeXuat) // Include PhieuDeXuat for detailed info
-                .Include(c => c.DungCu)      // Include DungCu for detailed info
-                .ToListAsync();
-
-            return Ok(chiTietDeXuatDungCus);
+            return await _context.ChiTietDeXuatDungCu.ToListAsync();
         }
 
+        // GET: api/ChiTietDeXuatDungCu/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ChiTietDeXuatDungCu>> GetChiTietDeXuatDungCu(int id)
+        {
+            var chiTietDeXuatDungCu = await _context.ChiTietDeXuatDungCu.FindAsync(id);
+
+            if (chiTietDeXuatDungCu == null)
+            {
+                return NotFound();
+            }
+
+            return chiTietDeXuatDungCu;
+        }
+        [HttpGet("byphieu/{maPhieu}")]
+        public async Task<ActionResult<ChiTietDeXuatDungCu>> GetChiTietDeXuatDungCuByPhieu(string maPhieu)
+        {
+            var details = await _context.ChiTietDeXuatDungCu
+                                        .Where(ct => ct.MaPhieu == maPhieu)
+                                        .ToListAsync();
+            return Ok(details);
+        }
         // POST: api/ChiTietDeXuatDungCu
         [HttpPost]
-        public async Task<IActionResult> CreateChiTietDeXuatDungCu([FromBody] ChiTietDeXuatDungCu newChiTiet)
+        public async Task<ActionResult<ChiTietDeXuatDungCu>> PostChiTietDeXuatDungCu(ChiTietDeXuatDungCu chiTietDeXuatDungCu)
         {
+            _context.ChiTietDeXuatDungCu.Add(chiTietDeXuatDungCu);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetChiTietDeXuatDungCu), new { id = chiTietDeXuatDungCu.MaCTDeXuatDC }, chiTietDeXuatDungCu);
+        }
+
+        // PUT: api/ChiTietDeXuatDungCu/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutChiTietDeXuatDungCu(int id, ChiTietDeXuatDungCu chiTietDeXuatDungCu)
+        {
+            if (id != chiTietDeXuatDungCu.MaCTDeXuatDC)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(chiTietDeXuatDungCu).State = EntityState.Modified;
+
             try
             {
-                if (newChiTiet == null)
-                {
-                    return BadRequest("ChiTietDeXuatDungCu cannot be null.");
-                }
-
-                // Validate that both MaPhieu and MaDungCu are provided
-                if (string.IsNullOrEmpty(newChiTiet.MaPhieu) || string.IsNullOrEmpty(newChiTiet.MaDungCu))
-                {
-                    return BadRequest("Both MaPhieu and MaDungCu are required.");
-                }
-
-                // Ensure the PhieuDeXuat exists
-                var phieuDeXuat = await _context.PhieuDeXuat.FindAsync(newChiTiet.MaPhieu);
-                if (phieuDeXuat == null)
-                {
-                    return NotFound("PhieuDeXuat not found.");
-                }
-
-                // Ensure the DungCu exists
-                var dungCu = await _context.DungCu.FindAsync(newChiTiet.MaDungCu);
-                if (dungCu == null)
-                {
-                    return NotFound("DungCu not found.");
-                }
-
-                _context.ChiTietDeXuatDungCu.Add(newChiTiet);
                 await _context.SaveChangesAsync();
-                return CreatedAtAction(nameof(GetChiTietDeXuatDungCu), new { maPhieu = newChiTiet.MaPhieu, maDungCu = newChiTiet.MaDungCu }, newChiTiet);
             }
-            catch (Exception ex)
+            catch (DbUpdateConcurrencyException)
             {
-                return StatusCode(500, "Internal server error: " + ex.Message);
+                if (!ChiTietDeXuatDungCuExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
             }
+
+            return NoContent();
         }
-        // GET: api/ChiTietDeXuatDungCu/{maPhieu}
-        [HttpGet("{maPhieu}")]
-        public async Task<IActionResult> GetChiTietDeXuatDungCuByMaPhieu(string maPhieu)
-        {
-            // Retrieve the details of ChiTietDeXuatDungCu for the specific MaPhieu
-            var chiTietDeXuatDungCus = await _context.ChiTietDeXuatDungCu
-                .Include(c => c.PhieuDeXuat)  // Include PhieuDeXuat for detailed info
-                .Include(c => c.DungCu)       // Include DungCu for detailed info
-                .Where(c => c.MaPhieu == maPhieu) // Filter by MaPhieu
-                .ToListAsync();
 
-            if (chiTietDeXuatDungCus == null || chiTietDeXuatDungCus.Count == 0)
+        // DELETE: api/ChiTietDeXuatDungCu/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteChiTietDeXuatDungCu(int id)
+        {
+            var chiTietDeXuatDungCu = await _context.ChiTietDeXuatDungCu.FindAsync(id);
+            if (chiTietDeXuatDungCu == null)
             {
-                return NotFound("No details found for the given MaPhieu.");
+                return NotFound();
             }
 
-            return Ok(chiTietDeXuatDungCus);
+            _context.ChiTietDeXuatDungCu.Remove(chiTietDeXuatDungCu);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        private bool ChiTietDeXuatDungCuExists(int id)
+        {
+            return _context.ChiTietDeXuatDungCu.Any(e => e.MaCTDeXuatDC == id);
+        }
+        [HttpPut("{maPhieu}/{maLoaiDC}")]
+        public async Task<IActionResult> UpdateOrCreate(string maPhieu, string maLoaiDC, [FromBody] ChiTietDeXuatDungCu chiTietDeXuatDungCu)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            // Tìm kiếm chi tiết đã tồn tại theo MaPhieu và MaLoaiDC
+            var existingDetail = await _context.ChiTietDeXuatDungCu
+                                               .FirstOrDefaultAsync(ct => ct.MaPhieu == maPhieu && ct.MaLoaiDC == maLoaiDC);
+
+            if (existingDetail != null)
+            {
+                // Nếu chi tiết đã tồn tại, cập nhật nó
+                existingDetail.TenDungCu = chiTietDeXuatDungCu.TenDungCu;
+                existingDetail.SoLuongDeXuat = chiTietDeXuatDungCu.SoLuongDeXuat;
+                existingDetail.MoTa = chiTietDeXuatDungCu.MoTa;
+
+                _context.ChiTietDeXuatDungCu.Update(existingDetail);
+                await _context.SaveChangesAsync();
+
+                return Ok(existingDetail);
+            }
+            else
+            {
+                // Nếu chi tiết không tồn tại, tạo mới một chi tiết đề xuất dụng cụ
+                chiTietDeXuatDungCu.MaPhieu = maPhieu;
+                _context.ChiTietDeXuatDungCu.Add(chiTietDeXuatDungCu);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction(nameof(GetChiTietDeXuatDungCu), new { id = chiTietDeXuatDungCu.MaCTDeXuatDC }, chiTietDeXuatDungCu);
+            }
+
         }
 
     }
-
 }

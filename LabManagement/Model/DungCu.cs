@@ -23,7 +23,7 @@ namespace LabManagement.Model
         public string? TinhTrang { get; set; } // Tình trạng
 
        
-        public string? ViTri { get; set; } // Vị trí
+       // public string? ViTri { get; set; } // Vị trí
 
         public DateTime? NgayCapNhat { get; set; } // Ngày cập nhật
 
@@ -44,7 +44,7 @@ namespace LabManagement.Model
         // Thuộc tính hình ảnh
 
         public string? HinhAnh { get; set; } // Đường dẫn hình ảnh
-
+        public bool IsDeleted { get; set; } = false;
         // Thuộc tính ảo để lấy URL hình ảnh
         [NotMapped]
         public string? HinhAnhUrl => string.IsNullOrEmpty(HinhAnh) ? null : $"http://localhost:5123/images/DungCu/{HinhAnh}";

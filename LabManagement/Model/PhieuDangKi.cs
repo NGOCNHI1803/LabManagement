@@ -34,6 +34,6 @@ namespace LabManagement.Model
         [JsonIgnore]
         public PhongThiNghiem? PhongThiNghiem { get; set; }
 
-        
+
     }
 }

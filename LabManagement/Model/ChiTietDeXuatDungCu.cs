@@ -6,22 +6,23 @@ namespace LabManagement.Model
 {
     public class ChiTietDeXuatDungCu
     {
-        [Key, Column(Order = 0)]
-        public string MaPhieu { get; set; } // Mã phiếu
-
-        [Key, Column(Order = 1)]
-        public string MaDungCu { get; set; } // Mã dụng cụ
-
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int MaCTDeXuatDC { get; set; } // Primary Key with Auto-Increment
+        public string? MaPhieu { get; set; } // Mã phiếu
+        public string? MaLoaiDC { get; set; } // Mã loại dụng cụ
+        public string? TenDungCu { get; set; } // Tên dụng cụ
         public int SoLuongDeXuat { get; set; } // Số lượng đề xuất
+        public string? MoTa { get; set; } // Mô tả
 
         // Quan hệ với bảng PhieuDeXuat
         [ForeignKey("MaPhieu")]
         [JsonIgnore]
         public PhieuDeXuat? PhieuDeXuat { get; set; }
 
-        // Quan hệ với bảng DungCu
-        [ForeignKey("MaDungCu")]
+        // Quan hệ với bảng LoaiDungCu
+        [ForeignKey("MaLoaiDC")]
         [JsonIgnore]
-        public DungCu? DungCu { get; set; }
+        public LoaiDungCu? LoaiDungCu { get; set; }
     }
 }

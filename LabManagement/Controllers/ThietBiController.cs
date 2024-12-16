@@ -14,7 +14,7 @@ namespace LabManagement.Controllers
     public class ThietBiController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        private const string ImageDirectory = @"D:\Ky1_2024_2025\DoAnChuyenNganh\BE\LabManagement\LabManagement\Image\ThietBi";
+        private static readonly string ImageDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", "ThietBi");
         private const string ImageBaseUrl = "http://localhost:5123/images/ThietBi";
 
         public ThietBiController(ApplicationDbContext context)
@@ -174,8 +174,31 @@ namespace LabManagement.Controllers
 
             return NotFound(new { Exists = false, Message = "Không tìm thấy thiết bị trong hệ thống." });
         }
+        // In ThietBiController.cs
+        [HttpPost("BatchUpdateIsDeleted")]
+        public async Task<IActionResult> BatchUpdateIsDeleted([FromBody] List<string> maThietBiList)
+        {
+            if (maThietBiList == null || !maThietBiList.Any())
+            {
+                return BadRequest("Danh sách mã thiết bị không được để trống.");
+            }
 
-        // GET: api/thietbi/search
+            var thietBis = await _context.ThietBi.Where(tb => maThietBiList.Contains(tb.MaThietBi)).ToListAsync();
+            if (!thietBis.Any())
+            {
+                return NotFound("Không tìm thấy thiết bị nào tương ứng.");
+            }
+
+            foreach (var thietBi in thietBis)
+            {
+                thietBi.isDeleted = true; 
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { Message = "Cập nhật thành công." });
+        }
+          // GET: api/thietbi/search
         [HttpGet("search")]
         public async Task<ActionResult<IEnumerable<ThietBi>>> SearchThietBi(string query)
         {
@@ -195,8 +218,6 @@ namespace LabManagement.Controllers
 
             return Ok(results);
         }
-
-
 
 
 

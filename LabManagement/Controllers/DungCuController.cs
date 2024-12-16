@@ -17,7 +17,7 @@ namespace LabManagement.Controllers
         //private const string ImageDirectory = @"D:\Project\LabManagement\LabManagement\LabManagement\Image\DungCu";
         private const string ImageBaseUrl = "http://localhost:5123/images/DungCu";
 
-        private const string ImageDirectory = @"D:\Ky1_2024_2025\DoAnChuyenNganh\BE\LabManagement\LabManagement\Image\DungCu";
+        private static readonly string ImageDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", "DungCu");
         //private const string ImageBaseUrl = "http://localhost/images/DungCu";
         public DungCuController(ApplicationDbContext context)
         {

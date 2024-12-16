@@ -18,8 +18,6 @@ public class PhieuDeXuatController : ControllerBase
     public async Task<IActionResult> GetPhieuDeXuat()
     {
         var phieuDeXuats = await _context.PhieuDeXuat
-            .Include(p => p.ThietBi)
-            .Include(p => p.NhanVien)
             .ToListAsync();
 
         return Ok(phieuDeXuats);
@@ -37,9 +35,9 @@ public class PhieuDeXuatController : ControllerBase
                 return BadRequest("PhieuDeXuat cannot be null.");
             }
 
-            if (string.IsNullOrEmpty(newPhieuDeXuat.MaThietBi) || string.IsNullOrEmpty(newPhieuDeXuat.MaNV))
+            if (string.IsNullOrEmpty(newPhieuDeXuat.MaNV))
             {
-                return BadRequest("Both MaThietBi and MaNV are required.");
+                return BadRequest("MaNV are required.");
             }
 
             _context.PhieuDeXuat.Add(newPhieuDeXuat);
@@ -63,7 +61,6 @@ public class PhieuDeXuatController : ControllerBase
     {
         // Find the proposal with the given MaPhieu
         var phieuDeXuat = await _context.PhieuDeXuat
-            .Include(p => p.ThietBi)  // Include ThietBi details
             .Include(p => p.NhanVien) // Include NhanVien details
             .FirstOrDefaultAsync(p => p.MaPhieu == maPhieu); // Search by MaPhieu
 
