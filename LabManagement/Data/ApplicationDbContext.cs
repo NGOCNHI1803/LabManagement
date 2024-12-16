@@ -56,6 +56,8 @@ namespace LabManagement.Data
         public DbSet<LichSuPhieuDeXuat> LichSuPhieuDeXuat { get; set; }
         public DbSet<DuyetPhieuLuanChuyen> DuyetPhieuLuanChuyen { get; set; }
 
+        public DbSet<LichThietBi> LichThietBi { get; set; }
+        public DbSet<LichDungCu> LichDungCu { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
