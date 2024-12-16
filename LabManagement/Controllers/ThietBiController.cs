@@ -72,25 +72,23 @@ namespace LabManagement.Controllers
             return CreatedAtAction(nameof(GetThietBiById), new { id = thietBi.MaThietBi }, thietBi);
         }
 
-        // PUT: api/thietbi/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateThietBi(string id, ThietBi thietBi)
+        public async Task<IActionResult> UpdateThietBi(string id, ThietBi updatedData)
         {
-            if (id != thietBi.MaThietBi)
+            // Lấy thiết bị hiện có từ database
+            var existingThietBi = await _context.ThietBi.FindAsync(id);
+            if (existingThietBi == null)
             {
-                return BadRequest("Mã thiết bị không khớp.");
+                return NotFound("Thiết bị không tồn tại.");
             }
 
-            if (!string.IsNullOrEmpty(thietBi.HinhAnh))
-            {
-                string fullImagePath = Path.Combine(ImageDirectory, thietBi.HinhAnh);
-                if (!System.IO.File.Exists(fullImagePath))
-                {
-                    return BadRequest("Hình ảnh không tồn tại.");
-                }
-            }
+            // Cập nhật các trường cụ thể
+            existingThietBi.NgayCapNhat = updatedData.NgayCapNhat;
+            existingThietBi.TinhTrang = updatedData.TinhTrang;
 
-            _context.Entry(thietBi).State = EntityState.Modified;
+            // Đảm bảo không thay đổi các trường khác
+            _context.Entry(existingThietBi).Property(x => x.NgayCapNhat).IsModified = true;
+            _context.Entry(existingThietBi).Property(x => x.TinhTrang).IsModified = true;
 
             try
             {
@@ -110,6 +108,7 @@ namespace LabManagement.Controllers
 
             return NoContent();
         }
+
 
         // DELETE: api/thietbi/{id}
         [HttpDelete("{id}")]

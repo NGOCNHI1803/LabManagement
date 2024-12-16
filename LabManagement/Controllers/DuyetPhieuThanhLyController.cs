@@ -39,30 +39,42 @@ namespace LabManagement.Controllers
             return Ok(duyetPhieuThanhLy);
         }
 
-        [HttpPut("{maPhieuTL}/{maNV}")]
-        public async Task<IActionResult> Update(string maPhieuTL, string maNV, [FromBody] DuyetPhieuThanhLy updatedDuyetPhieuThanhLy)
+        [HttpPut("{maPhieuTL}")]
+        public async Task<IActionResult> UpdateTrangThaiOrLyDo(string maPhieuTL, [FromBody] DuyetPhieuThanhLy updatedDuyetPhieuThanhLy)
         {
-            if (maPhieuTL != updatedDuyetPhieuThanhLy.MaPhieuTL || maNV != updatedDuyetPhieuThanhLy.MaNV)
+            // Tìm đối tượng trong cơ sở dữ liệu theo maPhieuTL
+            var existingDuyetPhieuThanhLy = await _context.DuyetPhieuThanhLy
+                .FirstOrDefaultAsync(e => e.MaPhieuTL == maPhieuTL);
+
+            if (existingDuyetPhieuThanhLy == null)
             {
-                return BadRequest();
+                return NotFound("Không tìm thấy phiếu thanh lý với mã tương ứng.");
             }
 
-            _context.Entry(updatedDuyetPhieuThanhLy).State = EntityState.Modified;
+            // Chỉ cập nhật các thuộc tính được phép
+            if (!string.IsNullOrEmpty(updatedDuyetPhieuThanhLy.TrangThai))
+            {
+                existingDuyetPhieuThanhLy.TrangThai = updatedDuyetPhieuThanhLy.TrangThai;
+            }
 
+            if (!string.IsNullOrEmpty(updatedDuyetPhieuThanhLy.LyDoTuChoi))
+            {
+                existingDuyetPhieuThanhLy.LyDoTuChoi = updatedDuyetPhieuThanhLy.LyDoTuChoi;
+            }
+
+            // Giữ nguyên các thuộc tính khác
+            // Lưu các thay đổi vào cơ sở dữ liệu
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!_context.DuyetPhieuThanhLy.Any(e => e.MaPhieuTL == maPhieuTL && e.MaNV == maNV))
-                {
-                    return NotFound();
-                }
-                throw;
+                throw; // Xử lý ngoại lệ nếu cần
             }
 
             return NoContent();
         }
+
     }
 }

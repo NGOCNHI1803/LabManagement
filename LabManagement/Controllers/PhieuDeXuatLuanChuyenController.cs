@@ -122,5 +122,6 @@ namespace LabManagement.Controllers
             return Ok(phieuLuanChuyens);
         }
 
+
     }
 }

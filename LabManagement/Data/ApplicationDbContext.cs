@@ -53,6 +53,7 @@ namespace LabManagement.Data
         public DbSet<ChiTietLuanChuyenDC> ChiTietLuanChuyenDC { get; set; }
         public DbSet<ChiTietLuanChuyenTB> ChiTietLuanChuyenTB { get; set; }
         public DbSet<LichSuPhieuLuanChuyen> LichSuPhieuLuanChuyen { get; set; }
+        public DbSet<LichSuPhieuDeXuat> LichSuPhieuDeXuat { get; set; }
         public DbSet<DuyetPhieuLuanChuyen> DuyetPhieuLuanChuyen { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -142,8 +143,6 @@ namespace LabManagement.Data
                       .IsRequired();
                 entity.Property(e => e.TinhTrang)
                       .HasMaxLength(50);
-                entity.Property(e => e.ViTri)
-                      .HasMaxLength(255);
                 entity.Property(e => e.NgayCapNhat);
                 entity.Property(e => e.NgaySX);
                 entity.Property(e => e.NhaSX)
@@ -267,9 +266,29 @@ namespace LabManagement.Data
                       .HasForeignKey(e => e.MaNV)
                       .OnDelete(DeleteBehavior.Restrict);
             });
+            // Cấu hình cho bảng LichSuPhieuDeXuat
+            modelBuilder.Entity<LichSuPhieuDeXuat>(entity =>
+            {
+                entity.HasKey(e => e.MaLichSu);
 
-           
-             modelBuilder.Entity<PhieuNhap>(entity => 
+                entity.Property(e => e.MaPhieu).HasMaxLength(20).IsRequired();
+                entity.Property(e => e.TrangThaiTruoc).HasMaxLength(50);
+                entity.Property(e => e.TrangThaiSau).HasMaxLength(50).IsRequired();
+                entity.Property(e => e.NgayThayDoi).HasDefaultValueSql("GETDATE()");
+                entity.Property(e => e.MaNV).HasMaxLength(20);
+
+                entity.HasOne(e => e.PhieuDeXuat)
+                      .WithMany()
+                      .HasForeignKey(e => e.MaPhieu)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(e => e.NhanVien)
+                      .WithMany()
+                      .HasForeignKey(e => e.MaNV)
+                      .OnDelete(DeleteBehavior.SetNull);
+            });
+
+            modelBuilder.Entity<PhieuNhap>(entity => 
             {
             
                     entity.HasKey(e => e.MaPhieuNhap);
