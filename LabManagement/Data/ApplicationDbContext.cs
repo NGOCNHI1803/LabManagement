@@ -295,7 +295,7 @@ namespace LabManagement.Data
                     entity.Property(e => e.MaPhieuNhap).HasMaxLength(20).IsRequired();
                     entity.Property(e => e.MaNV).HasMaxLength(20).IsRequired();
                     entity.Property(e => e.NgayNhap).IsRequired(false);
-                    entity.Property(e => e.MaPhieu).HasMaxLength(20).IsRequired();
+                    entity.Property(e => e.MaPhieu).HasMaxLength(20).IsRequired(false);
                     entity.Property(e => e.TongTien).HasColumnType("decimal(18,2)").IsRequired();
 
                     entity.HasOne(e => e.NhanVien)

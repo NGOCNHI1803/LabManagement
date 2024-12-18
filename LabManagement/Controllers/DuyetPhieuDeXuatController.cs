@@ -69,7 +69,6 @@ namespace LabManagement.Controllers
 
             return CreatedAtAction(nameof(GetById), new { id = duyetPhieu.MaPhieu }, duyetPhieu);
         }
-
-
+                                  
     }
 }

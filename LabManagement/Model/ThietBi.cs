@@ -47,7 +47,7 @@ namespace LabManagement.Model
         
 
         [ForeignKey("MaPhong")]
-
+        [JsonIgnore]
         public PhongThiNghiem? PhongThiNghiem { get; set; }
 
     }

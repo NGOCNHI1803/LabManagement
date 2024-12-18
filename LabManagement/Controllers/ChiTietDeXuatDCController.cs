@@ -132,13 +132,14 @@ namespace LabManagement.Controllers
             {
                 // Nếu chi tiết không tồn tại, tạo mới một chi tiết đề xuất dụng cụ
                 chiTietDeXuatDungCu.MaPhieu = maPhieu;
+                // Do not manually set MaCTDeXuatDC, let it auto-generate
                 _context.ChiTietDeXuatDungCu.Add(chiTietDeXuatDungCu);
                 await _context.SaveChangesAsync();
 
                 return CreatedAtAction(nameof(GetChiTietDeXuatDungCu), new { id = chiTietDeXuatDungCu.MaCTDeXuatDC }, chiTietDeXuatDungCu);
             }
-
         }
+
 
     }
 }

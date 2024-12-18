@@ -20,13 +20,20 @@ namespace LabManagement.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PhieuNhap>>> GetPhieuNhaps()
         {
-            // Lấy danh sách tất cả các phiếu nhập với thông tin thiết bị và nhân viên
+            // Lấy danh sách tất cả các phiếu nhập với thông tin nhân viên, không cần kiểm tra MaPhieu
             var phieuNhaps = await _context.PhieuNhap
                 .Include(p => p.NhanVien) // Bao gồm thông tin nhân viên
                 .ToListAsync();
 
+            // Kiểm tra nếu không có phiếu nhập nào
+            if (phieuNhaps == null || !phieuNhaps.Any())
+            {
+                return NotFound("Không tìm thấy phiếu nhập.");
+            }
+
             return Ok(phieuNhaps);
         }
+
 
         // GET: api/PhieuNhap/{id}
         [HttpGet("{id}")]
