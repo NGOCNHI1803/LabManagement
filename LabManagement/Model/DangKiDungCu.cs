@@ -13,7 +13,7 @@ namespace LabManagement.Model
         public string? MaDungCu { get; set; }
         public int SoLuong { get; set; }
         public DateTime? NgayDangKi { get; set; }
-
+        public DateTime? NgaySuDung {  get; set; }
         public DateTime? NgayKetThuc { get; set; }
 
         public string? TrangThaiSuDung { get; set; }

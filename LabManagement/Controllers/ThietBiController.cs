@@ -217,6 +217,50 @@ namespace LabManagement.Controllers
 
             return Ok(results);
         }
+        // PUT: api/thietbi/{id}/UpdateMaPhong
+        [HttpPut("{maThietBi}/UpdateMaPhong")]
+        public async Task<IActionResult> UpdateMaPhong(string maThietBi, [FromBody] string newMaPhong)
+        {
+            if (string.IsNullOrWhiteSpace(newMaPhong))
+            {
+                return BadRequest("Mã phòng không được để trống.");
+            }
+
+            // Tìm thiết bị cần cập nhật
+            var thietBi = await _context.ThietBi.FindAsync(maThietBi);
+            if (thietBi == null)
+            {
+                return NotFound("Không tìm thấy thiết bị với mã này.");
+            }
+
+            // Kiểm tra mã phòng mới có tồn tại trong hệ thống hay không
+            var phongThiNghiem = await _context.PhongThiNghiem.FindAsync(newMaPhong);
+            if (phongThiNghiem == null)
+            {
+                return NotFound("Không tìm thấy phòng thí nghiệm với mã này.");
+            }
+
+            // Cập nhật mã phòng
+            thietBi.MaPhong = newMaPhong;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ThietBiExists(maThietBi))
+                {
+                    return NotFound("Thiết bị không tồn tại.");
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return Ok(new { Message = "Cập nhật mã phòng thành công.", ThietBi = thietBi });
+        }
 
 
 

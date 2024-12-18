@@ -163,5 +163,7 @@ namespace LabManagement.Controllers
             public string? TrangThaiSuDung { get; set; }  // Trạng thái mới
             public string? TinhTrangSuDung { get; set; }
         }
+
+
     }
 }
