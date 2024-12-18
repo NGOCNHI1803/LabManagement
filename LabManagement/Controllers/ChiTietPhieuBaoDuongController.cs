@@ -81,5 +81,24 @@ namespace LabManagement.Controllers
 
             return Ok(chiTietPhieuBaoDuongList);
         }
+        // New Method: GET api/ChiTietPhieuBaoDuong/byMaThietBi/{maThietBi}
+        [HttpGet("byMaThietBi/{maThietBi}")]
+        public async Task<ActionResult<IEnumerable<ChiTietBaoDuongTB>>> GetChiTietPhieuBaoDuongByMaThietBi(string maThietBi)
+        {
+            // Fetching the ChiTietPhieuBaoDuong details for the given maThietBi
+            var chiTietPhieuBaoDuongList = await _context.ChiTietBaoDuongTB
+                .Include(c => c.PhieuBaoDuong)
+                .Include(c => c.ThietBi)
+                .Where(c => c.MaThietBi == maThietBi)
+                .ToListAsync();
+
+            if (chiTietPhieuBaoDuongList == null || !chiTietPhieuBaoDuongList.Any())
+            {
+                return NotFound($"No ChiTietPhieuBaoDuong found with MaThietBi: {maThietBi}");
+            }
+
+            return Ok(chiTietPhieuBaoDuongList);
+        }
+
     }
 }
