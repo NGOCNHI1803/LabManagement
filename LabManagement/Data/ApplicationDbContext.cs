@@ -58,6 +58,10 @@ namespace LabManagement.Data
 
         public DbSet<LichThietBi> LichThietBi { get; set; }
         public DbSet<LichDungCu> LichDungCu { get; set; }
+        public DbSet<ViTriDungCu> ViTriDungCu { get; set; }
+
+        public DbSet<QuanLyGioTB> QuanLyGioTB { get; set; }
+        public DbSet<QuanLyGioDC> QuanLyGioDC { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -864,7 +868,87 @@ namespace LabManagement.Data
                       .HasForeignKey(e => e.MaNV)
                       .OnDelete(DeleteBehavior.SetNull);
             });
+            modelBuilder.Entity<ViTriDungCu>(entity =>
+            {
+                entity.HasKey(e => new { e.MaDungCu, e.MaPhong });
+                entity.Property(e => e.MaDungCu).HasMaxLength(20).IsRequired();
+                entity.Property(e => e.SoLuong).IsRequired();
+                entity.Property(e => e.NgayCapNhat).HasDefaultValueSql("GETDATE()");
 
-        }
+                entity.HasOne(e => e.DungCu)
+                     .WithMany()
+                     .HasForeignKey(e => e.MaDungCu)
+                     .OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(e => e.PhongThiNghiem)
+                     .WithMany()
+                     .HasForeignKey(e => e.MaPhong)
+                     .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<QuanLyGioTB>(entity =>
+            {
+                entity.HasKey(e => e.MaQuanLyTB);
+                entity.Property(e => e.MaQuanLyTB).IsRequired();
+
+                entity.Property(e => e.MaPhieuDK)
+                      .HasMaxLength(20)
+                      .IsRequired(false);
+
+                entity.Property(e => e.soGioSuDungThucTe)
+                      .IsRequired(false);
+
+                entity.Property(e => e.MaThietBi)
+                      .HasMaxLength(20)
+                      .IsRequired(false);
+                entity.Property(e => e.MaPhong)
+                      .HasMaxLength(20)
+                      .IsRequired(false);
+
+                entity.HasOne(e => e.PhieuDangKi)
+                      .WithMany()
+                      .HasForeignKey(e => e.MaPhieuDK)
+                      .OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(e => e.PhongThiNghiem)
+                      .WithMany()
+                      .HasForeignKey(e => e.MaPhong)
+                      .OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(e => e.ThietBi)
+                     .WithMany()
+                     .HasForeignKey(e => e.MaThietBi)
+                     .OnDelete(DeleteBehavior.Restrict);
+            });
+            modelBuilder.Entity<QuanLyGioDC>(entity =>
+            {
+                entity.HasKey(e => e.MaQuanLyDC);
+                entity.Property(e => e.MaQuanLyDC).IsRequired();
+
+                entity.Property(e => e.MaPhieuDK)
+                      .HasMaxLength(20)
+                      .IsRequired(false);
+
+                entity.Property(e => e.soGioSuDungThucTe)
+                      .IsRequired(false);
+
+                entity.Property(e => e.MaDungCu)
+                      .HasMaxLength(20)
+                      .IsRequired(false);
+                entity.Property(e => e.MaPhong)
+                      .HasMaxLength(20)
+                      .IsRequired(false);
+
+                entity.HasOne(e => e.PhieuDangKi)
+                      .WithMany()
+                      .HasForeignKey(e => e.MaPhieuDK)
+                      .OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(e => e.PhongThiNghiem)
+                      .WithMany()
+                      .HasForeignKey(e => e.MaPhong)
+                      .OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(e => e.DungCu)
+                     .WithMany()
+                     .HasForeignKey(e => e.MaDungCu)
+                     .OnDelete(DeleteBehavior.Restrict);
+            });
+    }
     }
 }
