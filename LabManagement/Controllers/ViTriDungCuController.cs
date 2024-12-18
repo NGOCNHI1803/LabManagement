@@ -107,26 +107,51 @@ namespace LabManagement.Controllers
 
             return NoContent();
         }
-        // PUT: api/ViTriDungCu/UpdateMaPhong/{maDungCu}
-        [HttpPut("UpdateMaPhong/{maDungCu}")]
-        public async Task<IActionResult> UpdateMaPhong(string maDungCu, [FromBody] string newMaPhong)
+        [HttpPut("update-ma-phong/{maDungCu}")]
+        public IActionResult UpdateMaPhong(string maDungCu, string newMaPhong)
         {
-            if (string.IsNullOrEmpty(newMaPhong))
-                return BadRequest("New MaPhong cannot be empty.");
-
-            var viTriDungCu = await _context.ViTriDungCu.FirstOrDefaultAsync(v => v.MaDungCu == maDungCu);
+            // Tìm bản ghi ViTriDungCu với MaDungCu tương ứng
+            var viTriDungCu = _context.ViTriDungCu
+                .FirstOrDefault(v => v.MaDungCu == maDungCu);
 
             if (viTriDungCu == null)
-                return NotFound("Item not found.");
+            {
+                return NotFound("Không tìm thấy dụng cụ với mã: " + maDungCu);
+            }
 
-            viTriDungCu.MaPhong = newMaPhong;
-            viTriDungCu.NgayCapNhat = DateTime.Now;
+            // Kiểm tra xem MaPhong mới có hợp lệ không (phải tồn tại trong bảng PhongThiNghiem)
+            var phong = _context.PhongThiNghiem
+                .FirstOrDefault(p => p.MaPhong == newMaPhong);
 
-            _context.Entry(viTriDungCu).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            if (phong == null)
+            {
+                return BadRequest("MaPhong mới không tồn tại trong bảng PhongThiNghiem.");
+            }
 
-            return Ok(viTriDungCu);
+            // Xóa bản ghi cũ
+            _context.ViTriDungCu.Remove(viTriDungCu);
+
+            // Thêm bản ghi mới với MaPhong đã thay đổi
+            var newViTriDungCu = new ViTriDungCu
+            {
+                MaDungCu = maDungCu,
+                MaPhong = newMaPhong,
+                SoLuong = viTriDungCu.SoLuong,
+                NgayCapNhat = DateTime.Now
+            };
+            _context.ViTriDungCu.Add(newViTriDungCu);
+
+            // Lưu thay đổi vào cơ sở dữ liệu
+            try
+            {
+                _context.SaveChanges();
+                return Ok("Cập nhật MaPhong thành công.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Có lỗi xảy ra khi lưu thay đổi: " + ex.Message);
+            }
         }
 
-    }
+}
 }

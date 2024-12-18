@@ -217,49 +217,57 @@ namespace LabManagement.Controllers
 
             return Ok(results);
         }
-        // PUT: api/thietbi/{id}/UpdateMaPhong
         [HttpPut("{maThietBi}/UpdateMaPhong")]
-        public async Task<IActionResult> UpdateMaPhong(string maThietBi, [FromBody] string newMaPhong)
+        public async Task<IActionResult> UpdateMaPhong(string maThietBi, [FromBody] UpdateMaPhongRequest request)
         {
-            if (string.IsNullOrWhiteSpace(newMaPhong))
+            if (string.IsNullOrWhiteSpace(request.MaPhong))
             {
                 return BadRequest("Mã phòng không được để trống.");
             }
 
             // Tìm thiết bị cần cập nhật
-            var thietBi = await _context.ThietBi.FindAsync(maThietBi);
+            var thietBi = await _context.ThietBi.FirstOrDefaultAsync(tb => tb.MaThietBi == maThietBi);
             if (thietBi == null)
             {
-                return NotFound("Không tìm thấy thiết bị với mã này.");
+                return NotFound($"Không tìm thấy thiết bị với mã {maThietBi}.");
             }
 
             // Kiểm tra mã phòng mới có tồn tại trong hệ thống hay không
-            var phongThiNghiem = await _context.PhongThiNghiem.FindAsync(newMaPhong);
+            var phongThiNghiem = await _context.PhongThiNghiem.FirstOrDefaultAsync(ptn => ptn.MaPhong == request.MaPhong);
             if (phongThiNghiem == null)
             {
-                return NotFound("Không tìm thấy phòng thí nghiệm với mã này.");
+                return NotFound($"Không tìm thấy phòng thí nghiệm với mã {request.MaPhong}.");
             }
 
             // Cập nhật mã phòng
-            thietBi.MaPhong = newMaPhong;
+            thietBi.MaPhong = request.MaPhong;
 
             try
             {
                 await _context.SaveChangesAsync();
+                return Ok(new
+                {
+                    Message = "Cập nhật mã phòng thành công.",
+                    ThietBi = thietBi
+                });
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ThietBiExists(maThietBi))
+                if (!_context.ThietBi.Any(tb => tb.MaThietBi == maThietBi))
                 {
-                    return NotFound("Thiết bị không tồn tại.");
+                    return NotFound($"Thiết bị với mã {maThietBi} không tồn tại.");
                 }
                 else
                 {
                     throw;
                 }
             }
+        }
 
-            return Ok(new { Message = "Cập nhật mã phòng thành công.", ThietBi = thietBi });
+        // Định nghĩa lớp yêu cầu
+        public class UpdateMaPhongRequest
+        {
+            public string? MaPhong { get; set; }
         }
 
 
