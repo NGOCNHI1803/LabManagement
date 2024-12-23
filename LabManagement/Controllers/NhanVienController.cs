@@ -194,9 +194,30 @@ namespace LabManagement.Controllers
 
             return NoContent();
         }
+        [HttpPut("reactivate/{id}")]
+        public async Task<IActionResult> ReactivateNhanVien(string id)
+        {
+            var nhanVien = await _context.NhanVien.FirstOrDefaultAsync(nv => nv.MaNV == id);
 
+            if (nhanVien == null)
+            {
+                return NotFound(new { message = "Không tìm thấy nhân viên với mã này" });
+            }
 
+            nhanVien.isDeleted = true; 
+            _context.Entry(nhanVien).State = EntityState.Modified;
 
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+
+            return NoContent();
+        }
 
     }
 }

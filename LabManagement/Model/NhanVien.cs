@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace LabManagement.Model
 {
@@ -15,15 +16,18 @@ namespace LabManagement.Model
         // Thêm Email và Mật khẩu
         public string? Email { get; set; }
         public string? MatKhau { get; set; }
+        public bool isDeleted { get; set; } = false;
 
         // Foreign key for ChucVu
         public string? MaCV { get; set; }
         [ForeignKey("MaCV")]
+        [JsonIgnore]
         public ChucVu? ChucVu { get; set; }
 
         // Foreign key for NhomQuyen
         public string? MaNhom { get; set; }
         [ForeignKey("MaNhom")]
+        [JsonIgnore]
         public NhomQuyen? NhomQuyen { get; set; }
 
     }
