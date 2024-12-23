@@ -99,7 +99,9 @@ namespace LabManagement.Data
                       .WithMany()
                       .HasForeignKey(e => e.MaNhom)
                       .OnDelete(DeleteBehavior.Restrict);
-
+                entity.Property(e => e.isDeleted)
+                     .HasDefaultValue(false)
+                     .IsRequired();
                 entity.Property(e => e.TenNV).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.GioiTinh).HasMaxLength(10);
                 entity.Property(e => e.DiaChi).HasMaxLength(200);

@@ -73,6 +73,34 @@ public class PhieuDeXuatController : ControllerBase
         // Return the found proposal details
         return Ok(phieuDeXuat);
     }
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(string id, [FromBody] PhieuDeXuat updatedPhieuDeXuat)
+    {
+        // Kiểm tra xem ID trong route có khớp với ID của đối tượng không
+        if (id != updatedPhieuDeXuat.MaPhieu)
+        {
+            return BadRequest(new { message = "ID không khớp với mã phiếu đề xuất." });
+        }
 
+        // Đánh dấu đối tượng là đã được chỉnh sửa
+        _context.Entry(updatedPhieuDeXuat).State = EntityState.Modified;
 
+        try
+        {
+            // Lưu thay đổi vào cơ sở dữ liệu
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            // Kiểm tra xem phiếu đề xuất có tồn tại không
+            if (!_context.PhieuDeXuat.Any(e => e.MaPhieu == id))
+            {
+                return NotFound(new { message = "Phiếu đề xuất không tồn tại." });
+            }
+
+            throw;
+        }
+
+        return NoContent();
+    }
 }
