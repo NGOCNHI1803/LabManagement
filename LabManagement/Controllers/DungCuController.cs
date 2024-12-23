@@ -185,7 +185,32 @@ public async Task<IActionResult> CheckExistence([FromQuery] string ma)
         // Handle unexpected errors
         return StatusCode(500, new { exists = false, message = $"Lỗi: {ex.Message}" });
     }
-}
+    }
+        // GET: api/dungcu/quantities/{maDungCu}
+        [HttpGet("quantities/{maDungCu}")]
+        public async Task<ActionResult<int>> GetQuantitiesDungCu(string maDungCu)
+        {
+            try
+            {
+                // Tìm dụng cụ theo mã dụng cụ
+                var dungCu = await _context.DungCu
+                    .FirstOrDefaultAsync(dc => dc.MaDungCu == maDungCu);
+
+                if (dungCu == null)
+                {
+                    return NotFound(new { message = "Dụng cụ không tồn tại." });
+                }
+
+                // Trả về số lượng của dụng cụ
+                return Ok(dungCu.SoLuong);
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi nếu có
+                return StatusCode(500, new { message = $"Lỗi: {ex.Message}" });
+            }
+        }
+
 
     }
 }

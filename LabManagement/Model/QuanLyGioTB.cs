@@ -12,7 +12,7 @@ namespace LabManagement.Model
         public string? MaPhieuDK { get; set; }
         public string? MaThietBi { get; set; }
         public string? MaPhong { get; set; }
-        public decimal? soGioSuDungThucTe { get; set; }
+        public string? soGioSuDungThucTe { get; set; }
 
         [ForeignKey("MaPhieuDK")]
         [JsonIgnore]
